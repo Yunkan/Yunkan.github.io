@@ -1,6 +1,6 @@
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d");
-canvas.width = 900;
+canvas.width = window.innerWidth / 2;
 canvas.height = window.innerHeight;
 
 var sc = document.getElementById("score");
@@ -452,16 +452,61 @@ function animate()
 	}
 }
 
-canvas.onmousemove = function(e)
+function playerMove()
 {
 	if(canvas.width > pl.x - pl.w && pl.x + pl.w >= 0)
 	{
-		pl.x = e.offsetX - pl.w / 2;
+		pl.x = mouse.x - pl.w / 2;
 	}
 	if(canvas.height > pl.y - pl.h && pl.y + pl.h >= 0)
 	{
-		pl.y = e.offsetY - pl.h / 2;
+		pl.y = mouse.y - pl.h / 2;
 	}
 }
+
+var mouse = {
+	x: 0,
+	y: 0,
+	speedX: 0,
+	speedY: 0,
+	oldX: 0,
+	oldY: 0,
+
+	update: function()
+	{
+		this.speedX = (this.x - this.oldX) / 5;
+		this.speedY = (this.y - this.oldY) / 5;
+
+		this.oldX = this.x;
+		this.oldY = this.y;
+	}
+};
+
+function positionHandler(e)
+{
+	if (e.clientX && e.clientY)
+	{
+		mouse.x = e.offsetX;
+		mouse.y = e.offsetY;
+		playerMove();
+	}
+	else if (e.targetTouches)
+	{
+		mouse.x = e.targetTouches[0].offsetX;
+		mouse.y = e.targetTouches[0].offsetY;
+		e.preventDefault();
+	}
+}
+
+canvas.addEventListener('mousemove', positionHandler, false);
+canvas.addEventListener('touchstart', positionHandler, false);
+canvas.addEventListener('touchmove', positionHandler, false); 
+
+setInterval(
+	function()
+	{
+		mouse.update();
+	},
+1000 / 60);
 
 animate();
