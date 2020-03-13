@@ -495,6 +495,7 @@ function positionHandler(e)
 		mouse.x = e.targetTouches[0].offsetX;
 		mouse.y = e.targetTouches[0].offsetY;
 		e.preventDefault();
+		playerMove();
 	}
 }
 
