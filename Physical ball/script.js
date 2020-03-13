@@ -195,13 +195,13 @@ function moveBall()
 
 function positionHandler(e)
 {
-	if (e.clientX && e.clientY)
+	if(e.clientX && e.clientY)
 	{
 		mouse.x = e.clientX;
 		mouse.y = e.clientY;
 		moveBall();
 	}
-	else if (e.targetTouches)
+	else if(e.targetTouches)
 	{
 		mouse.x = e.targetTouches[0].clientX;
 		mouse.y = e.targetTouches[0].clientY;

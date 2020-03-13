@@ -471,13 +471,13 @@ var mouse = {
 
 function positionHandler(e)
 {
-	if (e.offsetX && e.clientY)
+	if(e.offsetX && e.clientY)
 	{
 		mouse.x = e.offsetX;
 		mouse.y = e.clientY;
 		playerMove();
 	}
-	else if (e.targetTouches)
+	else if(e.targetTouches)
 	{
 		mouse.x = e.targetTouches[0].offsetX;
 		mouse.y = e.targetTouches[0].clientY;
