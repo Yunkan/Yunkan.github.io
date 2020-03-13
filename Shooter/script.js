@@ -479,9 +479,8 @@ function positionHandler(e)
 	}
 	else if (e.targetTouches)
 	{
-		mouse.x = e.targetTouches[0].clientX;
+		mouse.x = e.targetTouches[0].clientX - canvas.offsetLeft;
 		mouse.y = e.targetTouches[0].clientY;
-		sc.innerHTML = e.targetTouches[0].offsetX;
 		e.preventDefault();
 		playerMove();
 	}
