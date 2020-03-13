@@ -479,11 +479,10 @@ function positionHandler(e)
 	}
 	else if (e.targetTouches)
 	{
-		mouse.x = e.targetTouches[0].offsetX;
-		mouse.y = e.targetTouches[0].clientY;
-		playerMove();
-		e.preventDefault();
-		document.location.href = "end.html";
+		// mouse.x = e.targetTouches[0].offsetX;
+		// mouse.y = e.targetTouches[0].clientY;
+		// e.preventDefault();
+		// playerMove();
 	}
 }
 
