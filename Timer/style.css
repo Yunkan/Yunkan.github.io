@@ -1,0 +1,35 @@
+body {
+    background-color: cornflowerblue;
+}
+#div {
+	width: auto;
+	font-size: 120px;
+	margin: 0 auto;
+	text-align: center;
+}
+
+.inputs {
+	margin: 50px auto;
+	max-width: 600px;
+}
+.p {
+	width: auto;
+    font-size: 120px;
+    margin: 0 auto;
+    text-align: center;
+
+    animation: 0.5s linear 12 changeColor; 
+}
+   @keyframes changeColor {
+   	0% {color: #8B0000;}
+    10% {color: #B22222;}
+    20% {color: #FF0000;}
+    30% {color: #FF4500;} 
+    40% {color: #FF8C00;}
+    50% {color: #FFA500;}
+    60% {color: #FFD700;}
+    70% {color: #FFFF00;}
+    80% {color: #EE82EE;}
+    90% {color: #FF00FF;}
+    100% {color: #9400D3;}
+}

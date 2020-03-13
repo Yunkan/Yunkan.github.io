@@ -1,0 +1,17 @@
+body {
+	margin: 0;
+	padding: 0;
+}
+
+#cnv {
+	background-color: #ddd;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	border: 1px solid #000;
+}
+
+button {
+	user-select: none;
+}
