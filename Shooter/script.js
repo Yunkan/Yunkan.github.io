@@ -479,8 +479,8 @@ function positionHandler(e)
 	}
 	else if (e.targetTouches)
 	{
-		mouse.x = e.targetTouches[0].offsetX - e.target.getBoundingClientRect().x;
-		mouse.y = e.targetTouches[0].offsetY - e.target.getBoundingClientRect().y;
+		mouse.x = e.targetTouches[0].offsetX - canvas.offsetLeft;
+		mouse.y = e.targetTouches[0].offsetY;
 		e.preventDefault();
 		playerMove();
 	}
