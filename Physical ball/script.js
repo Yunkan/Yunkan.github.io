@@ -155,11 +155,69 @@ function animate()
 	}
 }
 
-window.onmousemove = function(e)
+function dragBall()
 {
-	mouse.x = e.pageX;
-	mouse.y = e.pageY;
+	for(let ball of balls)
+	{
+		if(mouse.x <= ball.x + ball.radius && mouse.x + ball.radius >= ball.x &&
+		   mouse.y <= ball.y + ball.radius && mouse.y + ball.radius >= ball.y)
+		{
+			ball.mouseDown = true;
+		}
+	}
 }
+
+function releaseBall()
+{
+	for(let ball of balls)
+	{
+		if(ball.mouseDown)
+			ball.mouseDown = false;
+	}
+}
+
+function moveBall()
+{
+	for(let ball of balls)
+	{
+		if(ball.mouseDown)
+		{
+			if(mouse.x > ball.radius && mouse.x + ball.radius < canvas.width)
+				ball.x = mouse.x;									
+			if(mouse.y > ball.radius && mouse.y + ball.radius < canvas.height)
+				ball.y = mouse.y;
+
+			ball.dx = mouse.speedX;
+			ball.dy = mouse.speedY;
+		}
+	}
+}
+
+function positionHandler(e)
+{
+	if (e.clientX && e.clientY)
+	{
+		mouse.x = e.clientX;
+		mouse.y = e.clientY;
+		moveBall();
+	}
+	else if (e.targetTouches)
+	{
+		mouse.x = e.targetTouches[0].clientX;
+		mouse.y = e.targetTouches[0].clientY;
+		e.preventDefault();
+
+		dragBall();
+		moveBall();
+	}
+}
+
+canvas.addEventListener('mousemove', positionHandler, false);
+canvas.addEventListener('mousedown', dragBall, false);
+canvas.addEventListener('mouseup', releaseBall, false);
+canvas.addEventListener('touchstart', positionHandler, false);
+canvas.addEventListener('touchend', releaseBall, false);
+canvas.addEventListener('touchmove', positionHandler, false); 
 
 window.onkeydown = function(e)
 {
@@ -175,41 +233,6 @@ window.onkeydown = function(e)
 				ballGravity = ballGravity == 0 ? 1 : 0;
 				break;
 		}
-	}
-}
-
-canvas.onmousedown = function()
-{
-	for(let ball of balls)
-	{
-		if(mouse.x <= ball.x + ball.radius && mouse.x + ball.radius >= ball.x &&
-		   mouse.y <= ball.y + ball.radius && mouse.y + ball.radius >= ball.y)
-		{
-			ball.mouseDown = true;
-
-			canvas.onmousemove = function(e)
-			{
-				if(ball.mouseDown)
-				{
-					if(mouse.x > ball.radius && mouse.x + ball.radius < canvas.width)
-						ball.x = mouse.x;									
-					if(mouse.y > ball.radius && mouse.y + ball.radius < canvas.height)
-						ball.y = mouse.y;
-
-					ball.dx = mouse.speedX;
-					ball.dy = mouse.speedY;
-				}
-			}
-		}
-	}
-}
-
-canvas.onmouseup = function(e)
-{
-	for(let ball of balls)
-	{
-		if(ball.mouseDown)
-			ball.mouseDown = false;
 	}
 }
 
