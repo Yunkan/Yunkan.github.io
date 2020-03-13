@@ -475,14 +475,15 @@ function positionHandler(e)
 	{
 		mouse.x = e.offsetX;
 		mouse.y = e.clientY;
-		// playerMove();
+		playerMove();
 	}
 	else if (e.targetTouches)
 	{
 		mouse.x = e.targetTouches[0].offsetX;
 		mouse.y = e.targetTouches[0].clientY;
-		e.preventDefault();
 		playerMove();
+		e.preventDefault();
+		document.location.href = "end.html";
 	}
 }
 
