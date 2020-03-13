@@ -481,6 +481,7 @@ function positionHandler(e)
 	{
 		mouse.x = e.targetTouches[0].offsetX;
 		mouse.y = e.targetTouches[0].clientY;
+		sc.innerHTML = e.targetTouches[0].offsetX;
 		e.preventDefault();
 		playerMove();
 	}
