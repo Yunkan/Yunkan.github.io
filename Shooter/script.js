@@ -492,11 +492,10 @@ function positionHandler(e)
 	}
 	else if (e.targetTouches)
 	{
-		mouse.x = e.targetTouches[0].offsetX;
-		mouse.y = e.targetTouches[0].offsetY;
+		mouse.x = e.targetTouches[0].clientX - canvas.offsetTop;
+		mouse.y = e.targetTouches[0].clientY - canvas.offsetTop;
 		e.preventDefault();
 		playerMove();
-		ctx.fillText("1", 0, 200);
 	}
 }
 
