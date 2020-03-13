@@ -467,19 +467,6 @@ function playerMove()
 var mouse = {
 	x: 0,
 	y: 0,
-	speedX: 0,
-	speedY: 0,
-	oldX: 0,
-	oldY: 0,
-
-	update: function()
-	{
-		this.speedX = (this.x - this.oldX) / 5;
-		this.speedY = (this.y - this.oldY) / 5;
-
-		this.oldX = this.x;
-		this.oldY = this.y;
-	}
 };
 
 function positionHandler(e)
@@ -492,8 +479,8 @@ function positionHandler(e)
 	}
 	else if (e.targetTouches)
 	{
-		mouse.x = e.targetTouches[0].offsetX;
-		mouse.y = e.targetTouches[0].offsetY;
+		mouse.x = e.targetTouches[0].offsetX - canvas.offsetLeft;
+		mouse.y = e.targetTouches[0].offsetY - canvas.offsetTop;
 		e.preventDefault();
 		playerMove();
 	}
@@ -502,12 +489,5 @@ function positionHandler(e)
 canvas.addEventListener('mousemove', positionHandler, false);
 canvas.addEventListener('touchstart', positionHandler, false);
 canvas.addEventListener('touchmove', positionHandler, false); 
-
-setInterval(
-	function()
-	{
-		mouse.update();
-	},
-1000 / 60);
 
 animate();

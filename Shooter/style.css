@@ -12,9 +12,10 @@ body {
 
 #canvas {
 	background-color: #000;
-	display: block;
-	margin: 0 auto;
 	cursor: none;
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
 }
 
 .life {
