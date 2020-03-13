@@ -484,7 +484,7 @@ var mouse = {
 
 function positionHandler(e)
 {
-	if (e.clientX && e.clientY)
+	if (e.offsetX && e.offsetY)
 	{
 		mouse.x = e.offsetX;
 		mouse.y = e.offsetY;
@@ -496,6 +496,7 @@ function positionHandler(e)
 		mouse.y = e.targetTouches[0].offsetY;
 		e.preventDefault();
 		playerMove();
+		ctx.fillText("1", 0, 200);
 	}
 }
 
