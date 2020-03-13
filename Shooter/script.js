@@ -497,7 +497,7 @@ function positionHandler(e)
 		e.preventDefault();
 		playerMove();
 	}
-	else
+	if(!e.targetTouches)
 	{
 		sc.innerHTML = "123123123123";
 	}
