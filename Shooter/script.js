@@ -497,6 +497,10 @@ function positionHandler(e)
 		e.preventDefault();
 		playerMove();
 	}
+	else
+	{
+		sc.innerHTML = "123123123123";
+	}
 }
 
 canvas.addEventListener('mousemove', positionHandler, false);
