@@ -479,10 +479,10 @@ function positionHandler(e)
 	}
 	else if (e.targetTouches)
 	{
-		mouse.x = /*e.targetTouches[0].clientX*/200;
+		mouse.x = 0;
 		mouse.y = e.targetTouches[0].clientY;
-		e.preventDefault();
 		playerMove();
+		e.preventDefault();
 	}
 }
 
