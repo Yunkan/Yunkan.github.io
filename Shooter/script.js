@@ -479,7 +479,7 @@ function positionHandler(e)
 	}
 	else if (e.targetTouches)
 	{
-		mouse.x = e.targetTouches[0].clientX - canvas.offsetLeft;
+		mouse.x = e.targetTouches[0].clientX - canvas.offsetLeft * 10;
 		mouse.y = e.targetTouches[0].clientY;
 		e.preventDefault();
 		playerMove();
