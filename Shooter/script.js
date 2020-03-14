@@ -8,6 +8,10 @@ var life = document.getElementById("life");
 var score = 0;
 var enemySpeed = 2;
 var fps = document.getElementById("fps");
+var mouse = {
+	x: 0,
+	y: 0,
+};
 
 let frameCount = function _fc(timeStart){
         
@@ -287,6 +291,8 @@ setInterval(
 
 function animate()
 {
+	canvas.width = window.innerWidth / 2;
+	canvas.height = window.innerHeight;
 	requestAnimationFrame(animate);
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -463,11 +469,6 @@ function playerMove()
 		pl.y = mouse.y - pl.h / 2;
 	}
 }
-
-var mouse = {
-	x: 0,
-	y: 0,
-};
 
 function positionHandler(e)
 {
