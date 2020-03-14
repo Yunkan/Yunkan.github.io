@@ -480,6 +480,7 @@ function positionHandler(e)
 	}
 	else if(e.targetTouches)
 	{
+		alert(e.targetTouches[0].offsetX);
 		mouse.x = e.targetTouches[0].offsetX;
 		mouse.y = e.targetTouches[0].clientY;
 		e.preventDefault();
