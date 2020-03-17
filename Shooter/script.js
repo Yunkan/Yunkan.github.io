@@ -232,7 +232,7 @@ function Enemy(x, y, w, h)
 			}
 			else
 			{
-				if(this.x >= pl.x - 50 && this.x <= pl.x + 50)
+				if(this.x >= pl.x - 50 && this.x <= pl.x + 50 && this.y <= pl.y + pl.h)
 				{
 					this.x += getRandom(0, 100) <= 50 ? -this.dx * 4 : this.dx * 4;
 				}
