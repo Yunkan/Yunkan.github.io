@@ -73,6 +73,18 @@ function Player(x, y, w, h)
 	{
 		ctx.drawImage(this.img, this.x, this.y, this.w, this.h);
 	}
+
+	this.damage = function()
+	{
+		if(!shield)
+		{
+			this.life--;
+			bulletCount = bulletCount > 1 ? --bulletCount : bulletCount;
+			life.innerHTML = "Жизни: <br>" + this.life;
+			if(this.life <= 0)
+				document.location.href = "end.html";
+		}
+	}
 }
 
 var pl = new Player(canvas.width / 2 - 30, canvas.height - 50, 30, 50);
@@ -118,6 +130,14 @@ function BulletForExplosion(x, y, w, h)
 {
 	this.dx = getRandom(-12, 12);
 	this.dy = getRandom(-12, 12);
+	while(this.dx == 0)
+	{
+		this.dx = getRandom(-12, 12);
+	}
+	while(this.dy == 0)
+	{
+		this.dy = getRandom(-12, 12);
+	}
 	this.x = x;
 	this.y = y;
 	this.w = w;
@@ -162,12 +182,19 @@ function Enemy(x, y, w, h)
 	this.h = h;
 	this.dy = 2;
 	this.dx = (Math.random() - 0.5) * enemySpeed;
-	this.life = 3;
+	while(this.dy == 0)
+	{
+		this.dy = getRandom(-12, 12);
+	}
+	this.life = 5;
 	this.path = ["images/enemy.png", "images/enemy1.png", "images/enemy2.png"];
 	this.chance = getRandom(0, 100);
 	if(this.chance <= 20)
 	{
 		this.style = this.path[1];
+		this.life = 2;
+		this.dx = 3;
+		this.dy = 4;
 	}
 	else if(this.chance <= 30)
 	{
@@ -192,22 +219,33 @@ function Enemy(x, y, w, h)
 	{
 		if(this.style == this.path[1])
 		{
-			if(this.x >= pl.x)
+			if(this.y >= pl.y - 50 && this.y <= pl.y + 50)
 			{
-				this.x -= 3;
+				if(this.x > pl.x)
+				{
+					this.x += -this.dx;
+				}
+				else if(this.x < pl.x)
+				{
+					this.x += this.dx;
+				}
 			}
 			else
 			{
-				this.x += 3;
+				if(this.x >= pl.x - 50 && this.x <= pl.x + 50)
+				{
+					this.x += getRandom(0, 100) <= 50 ? -this.dx * 4 : this.dx * 4;
+				}
 			}
+			
 
-			if(this.y >= pl.y)
+			if(this.y > pl.y)
 			{
-				this.y -= 4;
+				this.y += -this.dy;
 			}
-			else
+			else if(this.y < pl.y)
 			{
-				this.y += 4;
+				this.y += this.dy;
 			}
 		}
 		else
@@ -228,6 +266,18 @@ function Enemy(x, y, w, h)
 			this.bullets.push(new BulletForEnemy(this.x + this.w / 2, this.y + this.h, 10, 20));
 			
 			setTimeout(e => this.shot(e), 1000);
+		}
+	}
+
+	this.damage = function(dmg, j)
+	{
+		this.life -= dmg;
+
+		if(this.life <= 0)
+		{
+			enemies.splice(j, 1);
+			score++;
+			sc.innerHTML = "Очки: <br>" + score;
 		}
 	}
 
@@ -253,7 +303,7 @@ function Bonus(x, y)
 	this.h = 40;
 	this.dy = 5;
 	this.life = 200;
-	this.taken = false;
+	this.take = false;
 	this.path = ["images/boost.png", "images/heal.png", "images/explosion.png", "images/shield.png", "images/doubleShot.png"];
 	this.style = this.path[getRandom(0, 4)];
 	this.img = new Image();
@@ -264,6 +314,50 @@ function Bonus(x, y)
 		ctx.drawImage(this.img, this.x, this.y, this.w, this.h);
 
 		this.y += this.dy;
+	}
+
+	this.taken = function()
+	{
+		this.take = true;
+		if(this.style == this.path[0])
+		{
+			boostSpeed = true;
+		}
+		else if(this.style == this.path[1])
+		{
+			pl.life = 10;
+			life.innerHTML = "Жизни: <br>" + pl.life;
+		}
+		else if(this.style == this.path[2])
+		{
+			for(let i = 0; i < explCount; i++)
+			{
+				bulletForExplosionArr.push(new BulletForExplosion(pl.x + pl.w / 2, pl.y + pl.h / 2, 25, 25));
+			}
+		}
+		else if(this.style == this.path[3])
+		{
+			shield = true;
+		}
+		else if(this.style == this.path[4])
+		{
+			bulletCount++;
+		}
+	}
+
+	this.damage = function()
+	{
+		this.life--;
+
+		if(this.life <= 0)
+		{
+			this.take = false;
+			issetBonus = false;
+			boostSpeed = false;
+			bulletSpeed = bulletCount * 100;
+			shield = false;
+			bulletForExplosionArr.splice(0, bulletForExplosionArr.length);
+		}
 	}
 }
 
@@ -297,139 +391,69 @@ function animate()
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 	pl.draw();
-	bulletLen = bullets.length;
 
-	while(bulletLen--)
+	for(let i in bullets)
 	{
-		bullets[bulletLen].draw();
+		bullets[i].draw();
 
-		if(bullets[bulletLen].y + bullets[bulletLen].h < 0)
+		if(bullets[i].y + bullets[i].h < 0)
+			bullets.splice(i, 1);
+
+		for(let j in enemies)
 		{
-			bullets.splice(bulletLen, 1);
+			if(checkCollision(bullets[i], enemies[j]))
+			{
+				enemies[j].damage(1, j);
+				bullets.splice(i, 1);
+			}
 		}
 	}
-	enemiesLen = enemies.length;
-	while(enemiesLen--)
+
+	for(let i in enemies)
 	{
-		enemies[enemiesLen].draw();
+		enemies[i].draw();
 
-		enemiesBulletLen = enemies[enemiesLen].bullets.length;
-		while(enemiesBulletLen--)
+		if(checkCollision(enemies[i], pl))
 		{
-			enemies[enemiesLen].bullets[enemiesBulletLen].draw();
-
-			if(enemies[enemiesLen].bullets[enemiesBulletLen].y - enemies[enemiesLen].bullets[enemiesBulletLen].h > canvas.height)
-			{
-				enemies[enemiesLen].bullets.splice(enemiesBulletLen, 1);
-			}
-
-			if(checkCollision(enemies[enemiesLen].bullets[enemiesBulletLen], pl))
-			{
-				if(!shield)
-				{
-					pl.life--;
-					bulletCount = bulletCount > 1 ? --bulletCount : bulletCount;
-					life.innerHTML = "Жизни: <br>" + pl.life;
-					if(pl.life <= 0)
-					{
-						document.location.href = "end.html";
-					}
-				}
-				
-				enemies[enemiesLen].bullets.splice(enemiesBulletLen, 1);
-			}
+			pl.damage();
+			enemies.splice(i, 1);
 		}
 
-		bulletLen = bullets.length;
-
-		while(bulletLen--)
+		for(let j in enemies[i].bullets)
 		{
-			if(checkCollision(enemies[enemiesLen], bullets[bulletLen]))
+			enemies[i].bullets[j].draw();
+			if(checkCollision(enemies[i].bullets[j], pl))
 			{
-				enemies[enemiesLen].life--;
-				bullets.splice(bulletLen, 1);
+				enemies[i].bullets.splice(j, 1);
+				pl.damage();
 			}
-		}
-
-		if(checkCollision(enemies[enemiesLen], pl))
-		{
-			if(!shield)
-			{
-				pl.life--;
-				bulletCount = bulletCount > 1 ? --bulletCount : bulletCount;
-				life.innerHTML = "Жизни: <br>" + pl.life;
-				if(pl.life <= 0)
-				{
-					document.location.href = "end.html";
-				}
-			}
-			
-			enemies.splice(enemiesLen, 1);		
-		}
-
-		if(enemies[enemiesLen] && enemies[enemiesLen].life <= 0)
-		{
-			enemies.splice(enemiesLen, 1);
-			score++;
-			sc.innerHTML = "Очки: <br>" + score;
-		}
-
-		if(enemies[enemiesLen] && enemies[enemiesLen] && enemies[enemiesLen].y - enemies[enemiesLen].h > canvas.height)
-		{
-			enemies.splice(enemiesLen, 1);
 		}
 	}
 
 	if(issetBonus)
 	{
-		if(!bonus.taken)
+		if(!bonus.take)
 		{
 			bonus.draw();
 
 			if(checkCollision(bonus, pl))
 			{
-				if(bonus.style == "images/boost.png")
-				{
-					boostSpeed = true;
-				}
-				else if(bonus.style == "images/heal.png")
-				{
-					pl.life = 10;
-					life.innerHTML = "Жизни: <br>" + pl.life;
-				}
-				else if(bonus.style == "images/explosion.png")
-				{
-					for(var j = 0; j < explCount; j++)
-					{
-						bulletForExplosionArr.push(new BulletForExplosion(pl.x + pl.w / 2, pl.y + pl.h / 2, 25, 25));
-					}
-				}
-				else if(bonus.style == 'images/shield.png')
-				{
-					shield = true;
-				}
-				else if(bonus.style == "images/doubleShot.png")
-				{
-					bulletCount++;
-				}
-
-				bonus.taken = true;
+				bonus.taken();
 			}
 		}
 
-		if(bonus.taken)
+		if(bonus.take)
 		{
-			bulletLen = bulletForExplosionArr.length;
-			while(bulletLen--)
+			for(let i in bulletForExplosionArr)
 			{
-				bulletForExplosionArr[bulletLen].draw();
-				enemiesLen = enemies.length;
-				while(enemiesLen-- && enemies[enemiesLen])
+				bulletForExplosionArr[i].draw();
+
+				for(let j in enemies)
 				{
-					if(checkCollision(enemies[enemiesLen], bulletForExplosionArr[bulletLen]))
+					if(checkCollision(bulletForExplosionArr[i], enemies[j]))
 					{
-						enemies[enemiesLen].life -= enemies[enemiesLen].life;
-						bulletForExplosionArr.splice(bulletLen, 1);
+						enemies[j].damage(enemies[j].life, j);
+						bulletForExplosionArr.splice(i, 1);
 					}
 				}
 			}
@@ -443,17 +467,7 @@ function animate()
 				ctx.stroke();
 			}
 
-			bonus.life--;
-
-			if(bonus.life <= 0)
-			{
-				bonus.taken = false;
-				issetBonus = false;
-				boostSpeed = false;
-				bulletSpeed = bulletCount * 100;
-				shield = false;
-				bulletForExplosionArr.splice(0, bulletForExplosionArr.length);
-			}
+			bonus.damage();
 		}
 	}
 }
