@@ -265,7 +265,7 @@ function Enemy(x, y, w, h)
 		{
 			this.bullets.push(new BulletForEnemy(this.x + this.w / 2, this.y + this.h, 10, 20));
 			
-			setTimeout(e => this.shot(e), 1000);
+			setTimeout(e => this.shot(e), getRandom(800, 1000));
 		}
 	}
 
