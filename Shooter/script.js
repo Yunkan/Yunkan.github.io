@@ -416,7 +416,7 @@ function animate()
 		if(checkCollision(enemies[i], pl))
 		{
 			pl.damage();
-			enemies.splice(i, 1);
+			enemies[i].damage(enemies[i].life, i);
 		}
 
 		for(let j in enemies[i].bullets)
