@@ -13,25 +13,24 @@ var mouse = {
 	y: 0,
 };
 
-let frameCount = function _fc(timeStart){
-        
-        let now = performance.now();
-        let duration = now - timeStart;
-        
-        if(duration < 1000){
-            
-            _fc.counter++;
-            
-        } else {
-                      
-            _fc.fps = _fc.counter;
-            _fc.counter = 0;
-            timeStart = now; 
-            fps.innerHTML = "FPS: <br>" + _fc.fps;
+let frameCount = function _fc(timeStart)
+{
+	let now = performance.now();
+	let duration = now - timeStart;
 
-        }
-        requestAnimationFrame(() => frameCount(timeStart)); 
-    }
+	if(duration < 1000)
+	{  
+	    _fc.counter++;
+	}
+	else
+	{        
+	    _fc.fps = _fc.counter;
+	    _fc.counter = 0;
+	    timeStart = now; 
+	    fps.innerHTML = "FPS: <br>" + _fc.fps;
+	}
+	requestAnimationFrame(() => frameCount(timeStart)); 
+}
 
 frameCount.counter = 0;
 frameCount.fps = 0;
@@ -191,14 +190,14 @@ function Enemy(x, y, w, h)
 	this.chance = getRandom(0, 100);
 	if(this.chance <= 20)
 	{
+		this.style = this.path[2];
+	}
+	else if(this.chance <= 40)
+	{
 		this.style = this.path[1];
 		this.life = 2;
 		this.dx = 3;
 		this.dy = 4;
-	}
-	else if(this.chance <= 30)
-	{
-		this.style = this.path[2];
 	}
 	else
 	{
@@ -265,7 +264,7 @@ function Enemy(x, y, w, h)
 		{
 			this.bullets.push(new BulletForEnemy(this.x + this.w / 2, this.y + this.h, 10, 20));
 			
-			setTimeout(e => this.shot(e), getRandom(800, 1000));
+			setTimeout(e => this.shot(e), 1000);
 		}
 	}
 
