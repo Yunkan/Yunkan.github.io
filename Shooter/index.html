@@ -3,15 +3,47 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Shooter</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="style.css">
 </head>
 <body>
-	<div class="life" id="life">Жизни: <br>10</div>
-	<div class="score" id="score">Очки: <br>0</div>
-	<div class="fps" id="fps">FPS: <br>0</div>
+	<div class="stats">
+		<div class="life" id="lifeBox">ОЗ: <br>100</div>
+		<div class="stage" id="stageBox">Этап: <br>1</div>	
+	</div>
+	
+	<div class="fps" id="fpsBox">FPS: <br>0</div>
+
+	<div class="main_menu" id="mainMenu">
+		<button id="startButton">Начать</button>
+	</div>
+
+	<div class="next_stage_menu" id="nextStageMenu">
+		<div class="points" id="pointsBox">Очков: 0</div>
+		<div class="upgrades">
+			<button data-dmg="true">Урон: 1/5 +</button>
+			<button data-hp="true">ОЗ: 100/200 +</button>
+			<button data-speed="true">Скорость: 1/5 +</button>	
+			<button data-def="true">Броня: 0/4 +</button>	
+		</div>
+		<div class="abilities" id="abilitiesBox">
+			<button data-heal="1">Ремонт(1)</button>
+			<button data-regen="3">Регенерация(3)</button>
+			<button data-pierce="5">Пробивающие пули(5)</button>
+			<button data-doubleshot="5">Двойной выстрел(5)</button>
+		</div>
+		<button class="next-btn" data-next="true">Дальше</button>
+	</div>
+
+	<div class="end" id="end">
+		<button id="endButton">Заново</button>
+	</div>
 	<canvas id="canvas"></canvas>
 
-
-	<script src="script.js"></script>
+	<script src="scripts/main.js"></script>
+	<script src="scripts/player.js"></script>
+	<script src="scripts/enemy.js"></script>
+	<script src="scripts/animation.js"></script>
+	<script src="scripts/abilities.js"></script>
 </body>
 </html>

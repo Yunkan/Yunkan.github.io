@@ -1,9 +1,3 @@
-*,
-*:before,
-*:after {
-	margin: 0;
-}
-
 body {
 	margin: 0;
 	width: 100%;
@@ -18,37 +12,184 @@ body {
 	transform: translateX(-50%);
 }
 
-.life {
-	width: 150px;
+.stats {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: absolute;
+	width: 100px;
 	height: 100px;
-	border: 1px solid black;
+}
+
+.life, .stage, .fps {
+	padding: .5em;
 	position: absolute;
 	text-align: center;
 	font-size: 40px;
 }
-.score {
-	width: 150px;
-	height: 100px;
-	border: 1px solid black;
-	border-top: none; 
-	position: absolute;
+
+.stage {
 	top: 100px;
-	text-align: center;
-	font-size: 40px;
 }
-.link, a{
-	font-size: 100px;
-	margin: 150px auto;
-	text-align: center;
-	color: #000;
-}
+
 .fps {
-	position: absolute;
 	top: 0;
 	right: 0;
-	width: 150px;
-	height: 100px;
-	border: 1px solid black;
-	text-align: center;
-	font-size: 40px;
+}
+
+.main_menu {
+	opacity: 1;
+	z-index: 9999;
+	position: absolute;
+	width: 50%;
+	height: 100%;
+	left: 25%;
+	background-color: #fff;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	transition: .5s;
+}
+
+.main_menu button {
+	padding: 1em 2em;
+	font-size: 24px;
+	cursor: pointer;
+	border: 3px solid #000;
+	background-color: #fff;
+	outline: none;
+	transition: .2s;
+}
+
+.main_menu button:hover {
+	background-color: #000;
+	color: #fff;
+}
+
+.next_stage_menu {
+	opacity: 0;
+	z-index: 9998;
+	position: absolute;
+	width: 50%;
+	height: 100%;
+	left: 25%;
+	background-color: #fff;
+	display: none;
+	flex-flow: column;
+	justify-content: space-around;
+	align-items: center;
+	transition: .5s;
+}
+
+.upgrades, .abilities {
+	display: grid;
+	justify-items: center;
+	align-items: center; 
+	grid-template-columns: repeat(3, 200px);
+	grid-auto-rows: 50px;
+}
+
+.next_stage_menu .next-btn {
+	padding: 1em;
+	font-size: 24px;
+	cursor: pointer;
+	border: 3px solid #000;
+	background-color: #fff;
+	outline: none;
+	transition: .2s;
+}
+
+.next_stage_menu .next-btn:hover {
+	background-color: #000;
+	color: #fff;
+}
+
+.upgrades button:hover {
+	background-color: #ddd;
+	padding: 0.5em;
+}
+
+.upgrades button {
+	border: none;
+	background: none;
+	cursor: pointer;
+	font-size: 16px;
+	outline: none;
+	display: flex;
+	align-items: center;
+	border-radius: 1em;
+	transition: .2s;
+}
+
+.abilities button {
+	border-radius: 1em;
+	padding: 1em 2em;
+	background-color: #fff;
+	border: 3px solid #000;
+	outline: none;
+	cursor: pointer;
+	transition: .2s;
+}
+
+.abilities button:hover {
+	background-color: #ddd;
+}
+
+.abilities button.bought {
+	background-color: #0f0;
+	border: 3px solid #0e4d0e;
+	color: #fff;
+}
+
+.end {
+	opacity: 0;
+	z-index: 9997;
+	position: absolute;
+	width: 50%;
+	height: 100%;
+	left: 25%;
+	background-color: #fff;
+	display: none;
+	justify-content: center;
+	align-items: center;
+	transition: .5s;
+}
+
+.end button {
+	padding: 1em 2em;
+	font-size: 24px;
+	cursor: pointer;
+	border: 3px solid #000;
+	background-color: #fff;
+	outline: none;
+	transition: .2s;
+}
+
+.end button:hover {
+	background-color: #000;
+	color: #fff;
+}
+
+@media (max-width: 800px) {
+	.next_stage_menu {
+		font-size: 12px;
+	}
+
+	.upgrades, .abilities {
+		grid-template-columns: repeat(2, 200px);
+	}
+
+	.life, .stage, .fps {
+		font-size: 20px;
+	}
+
+	.next_stage_menu .next-btn, .end button, .main_menu button {
+		font-size: 18px;
+	}
+}
+
+@media (max-width: 400px) {
+	.upgrades, .abilities {
+		grid-template-columns: repeat(1, 200px);
+	}
 }
