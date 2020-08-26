@@ -7,7 +7,7 @@ function Player(x, y, w, h) {
 	this.life = 100;
 	this.damage = 1;
 	this.speed = 1;
-	this.def = 0;
+	this.defense = 0;
 	this.abilities = [];
 	this.points = 0;
 	this.pierce = false;
@@ -22,13 +22,13 @@ Player.prototype.draw = function() {
 	if(enemyArray) {
 		enemyArray.forEach((enemy, i) => {
 			if(checkCollision(this, enemy)) {
-				this.takeDamage(enemy.damage);
+				this.takeDamage(-enemy.damage);
 				enemyArray.splice(i, 1);
 			}
 
 			enemy.bullets.forEach((bullet, i) => {
 				if(checkCollision(this, bullet)) {
-					this.takeDamage(enemy.damage);
+					this.takeDamage(-enemy.damage);
 					enemy.bullets.splice(i, 1);
 				}
 			})
@@ -47,9 +47,66 @@ Player.prototype.move = function() {
 }
 
 Player.prototype.takeDamage = function (damage) {
-	this.life -= damage - this.def;
-	setLife(this.life);
+	this.setLife(damage + this.defense);
 	if(this.life <= 0) showEndScreen();
+}
+
+Player.prototype.setLife = function(life) {
+	if(life) this.life += life;
+	lifeBox.innerHTML = `ОЗ: <br>${this.life}`;
+}
+
+Player.prototype.setPoints = function(points) {
+	if(points) this.points += points;
+	pointsBox.innerHTML = `Очков: ${this.points}`;
+}
+
+Player.prototype.upgrade = function(up) {
+	switch(up) {
+		case 'damage':
+			if(this.damage < damageUpMax) {
+				this.damage++;
+				nextStageMenu.querySelector(`#${up}`).innerHTML = `Урон: ${this.damage}/5 +`;
+			}
+			break;
+		case 'hp':
+			if(this.maxLife < hpUpMax) {
+			this.maxLife += 10;
+				this.setLife(10);
+				nextStageMenu.querySelector(`#${up}`).innerHTML = `ОЗ: ${this.maxLife}/200 +`;
+			}
+			break;
+		case 'speed':
+			if(this.speed < speedUpMax) {
+				this.speed++;
+				nextStageMenu.querySelector(`#${up}`).innerHTML = `Скорость: ${this.speed}/5 +`;
+			}
+			break;
+		case 'defense':
+			if(this.defense < defenseUpMax) {
+				this.defense++;
+				nextStageMenu.querySelector(`#${up}`).innerHTML = `Броня: ${this.defense}/4 +`;
+			}
+			break;
+	}
+}
+
+Player.prototype.learn = function(ability) {
+	switch(ability) {
+		case 'heal':
+			this.life = this.maxLife;
+			this.setLife();
+			break;
+		case 'regen':
+			this.abilities.push(new Regeneration());
+			break;
+		case 'pierce':
+			this.abilities.push(new Pierce());
+			break;
+		case 'doubleShot':
+			this.abilities.push(new DoubleShot());
+			break;
+	}
 }
 
 const player = new Player(canvas.width / 2 - playerWidth, canvas.height - playerHeight, playerWidth, playerHeight);

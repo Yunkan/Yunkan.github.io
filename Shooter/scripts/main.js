@@ -29,10 +29,10 @@ const enemyBulletWidth = window.matchMedia("(max-width: 400px)").matches ? 7 : 1
 const enemyBulletHeight = window.matchMedia("(max-width: 400px)").matches ? 15 : 20;
 const enemyColors = ['Blue', 'Yellow', 'Red'];
 
-const dmgUpMax = 5;
+const damageUpMax = 5;
 const hpUpMax = 200;
 const speedUpMax = 5;
-const defUpMax = 4;
+const defenseUpMax = 4;
 
 let frameCount = function _fc(timeStart) {
 	let now = performance.now();
@@ -54,20 +54,26 @@ frameCount.fps = 0;
 
 frameCount(performance.now());
 
-function setLife(life) {
-	lifeBox.innerHTML = `ОЗ: <br>${life}`;
-}
-
 function setStage() {
 	stageBox.innerHTML = `Этап: <br>${stage}`;
 }
 
-function setPoints() {
-	pointsBox.innerHTML = `Очков: ${player.points}`;
+function removePoints() {
+	player.setPoints(-1);
 }
 
-setLife(100);
-setStage();
+function nextStage() {
+	stage++;
+	setStage();
+	enemySpawn();
+	stageStarted = true;
+	nextStageMenu.style.opacity = 0;
+	setTimeout(() => nextStageMenu.style.display = 'none', 500);
+	player.abilities.forEach(ability => ability.act());
+	player.x = canvas.width / 2;
+	player.y = canvas.height - player.h;
+	animate();
+}
 
 function getRandom(min, max) {
 	return Math.floor(min + Math.random() * (max + 1 - min));
@@ -94,6 +100,70 @@ function positionHandler(e) {
 		mouse.y = e.targetTouches[0].clientY;
 		e.preventDefault();
 		player.move();
+	}
+}
+
+function checkAction(e) {
+	if(e.target.id == "next") {
+		nextStage();
+	}
+	if(player.points > 0) {
+		if(e.target.parentNode.className == 'upgrades') {
+			player.upgrade(e.target.id);
+			player.setPoints(-1);
+		} else if(e.target.parentNode.className == 'abilities') {
+			if(player.points >= e.target.id.match(/\d+/)[0] && !abilitiesBox.querySelector(`#${e.target.id}`).classList.contains('bought')) {
+				player.learn(e.target.id.match(/\D+/)[0]);
+				player.setPoints(-e.target.id.match(/\d+/)[0]);
+				if(e.target.id != 'heal1')abilitiesBox.querySelector(`#${e.target.id}`).classList.add('bought');
+			}
+		}
+		// if(e.target.dataset.dmg && player.damage < dmgUpMax) {
+		// 	player.points--;
+		// 	player.damage++;
+		// 	setPoints();
+		// 	nextStageMenu.querySelector('[data-dmg]').innerHTML = `Урон: ${player.damage}/5 +`;
+		// } else if(e.target.dataset.hp && player.maxLife < hpUpMax) {
+		// 	player.points--;
+		// 	player.maxLife += 10;
+		// 	player.life += 10;
+		// 	setLife(player.life);
+		// 	setPoints();
+		// 	nextStageMenu.querySelector('[data-hp]').innerHTML = `ОЗ: ${player.maxLife}/200 +`;
+		// } else if(e.target.dataset.speed && player.speed < speedUpMax) {
+		// 	player.points--;
+		// 	player.speed++;
+		// 	setPoints();
+		// 	nextStageMenu.querySelector('[data-speed]').innerHTML = `Скорость: ${player.speed}/5 +`;
+		// } else if(e.target.dataset.def && player.def < defUpMax) {
+		// 	player.points--;
+		// 	player.def++;
+		// 	setPoints();
+		// 	nextStageMenu.querySelector('[data-def]').innerHTML = `Броня: ${player.def}/4 +`;
+		// } else if(e.target.dataset.regen && player.points >= e.target.dataset.regen) {
+		// 	player.points -= e.target.dataset.regen;
+		// 	player.abilities.push(new Regeneration());
+		// 	setPoints();
+		// 	abilitiesBox.querySelector('[data-regen]').classList.add('bought');
+		// 	abilitiesBox.querySelector('[data-regen]').dataset.regen = 'bought';
+		// } else if(e.target.dataset.pierce && player.points >= e.target.dataset.pierce) {
+		// 	player.points -= e.target.dataset.pierce;
+		// 	player.abilities.push(new Pierce());
+		// 	setPoints();
+		// 	abilitiesBox.querySelector('[data-pierce]').classList.add('bought');
+		// 	abilitiesBox.querySelector('[data-pierce]').dataset.pierce = 'bought';
+		// } else if(e.target.dataset.doubleshot && player.points >= e.target.dataset.doubleshot) {
+		// 	player.points -= e.target.dataset.doubleshot;
+		// 	player.abilities.push(new DoubleShot());
+		// 	setPoints();
+		// 	abilitiesBox.querySelector('[data-doubleshot]').classList.add('bought');
+		// 	abilitiesBox.querySelector('[data-doubleshot]').dataset.doubleshot = 'bought';
+		// } else if(e.target.dataset.heal && player.points >= e.target.dataset.heal) {
+		// 	player.points -= e.target.dataset.heal;
+		// 	player.life = player.maxLife;
+		// 	setPoints();
+		// 	player.setLife();
+		// }
 	}
 }
 

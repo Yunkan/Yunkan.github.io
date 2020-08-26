@@ -4,12 +4,9 @@ function Regeneration() {
 
 Regeneration.prototype.act = function() {
 	if(player.life != player.maxLife) {
-		player.life += this.regen;
-		setLife(player.life);
-		if(stageStarted) setTimeout(() => this.act(), 1000);
-	} else {
-		if(stageStarted) setTimeout(() => this.act(), 1000);
+		player.setLife(this.regen);
 	}
+	if(stageStarted) setTimeout(() => this.act(), 1000);
 }
 
 function Pierce() {
