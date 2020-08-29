@@ -34,26 +34,6 @@ function Enemy(x, y, w, h, color) {
 	this.shoot();
 }
 
-function EnemyBullet(x, y, w, h, color) {
-	this.x = x;
-	this.y = y;
-	this.w = w;
-	this.h = h;
-	this.img = new Image();
-	this.img.src = `images/bullet${color}.png`;
-}
-
-EnemyBullet.prototype.draw = function(enemy, i) {
-	ctx.drawImage(this.img, this.x, this.y, this.w, this.h);
-	this.move(enemy, i);
-}
-
-EnemyBullet.prototype.move = function(enemy, i) {
-	this.y += 10;
-
-	if(this.y >= canvas.height) enemy.bullets.splice(i, 1);
-}
-
 Enemy.prototype.draw = function() {
 	ctx.drawImage(this.img, this.x, this.y, this.w, this.h);
 }
@@ -94,7 +74,27 @@ Enemy.prototype.takeDamage = function(damage, i) {
 Enemy.prototype.shoot = function() {
 	this.bullets.push(new EnemyBullet(this.x + this.w / 2 - 5, this.y + this.h, enemyBulletWidth, enemyBulletHeight, this.color));
 
-	setTimeout(e => this.shoot(e), this.shootSpeed);
+	setTimeout(e => this.shoot(e), getRandom(this.shootSpeed - 500, this.shootSpeed + 500));
+}
+
+function EnemyBullet(x, y, w, h, color) {
+	this.x = x;
+	this.y = y;
+	this.w = w;
+	this.h = h;
+	this.img = new Image();
+	this.img.src = `images/bullet${color}.png`;
+}
+
+EnemyBullet.prototype.draw = function(enemy, i) {
+	ctx.drawImage(this.img, this.x, this.y, this.w, this.h);
+	this.move(enemy, i);
+}
+
+EnemyBullet.prototype.move = function(enemy, i) {
+	this.y += 10;
+
+	if(this.y >= canvas.height) enemy.bullets.splice(i, 1);
 }
 
 const enemyArray = [];

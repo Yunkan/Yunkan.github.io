@@ -9,14 +9,6 @@ Regeneration.prototype.act = function() {
 	if(stageStarted) setTimeout(() => this.act(), 1000);
 }
 
-function Pierce() {
-	this.pierce = true;
-}
-
-Pierce.prototype.act = function() {
-	player.pierce = this.pierce;
-}
-
 function DoubleShot() {
 	this.doubleShot = true;
 }

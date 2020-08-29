@@ -38,8 +38,7 @@ body {
 }
 
 .main_menu {
-	opacity: 1;
-	z-index: 9997;
+	z-index: 9998;
 	position: absolute;
 	width: 50%;
 	height: 100%;
@@ -67,8 +66,7 @@ body {
 }
 
 .next_stage_menu {
-	opacity: 0;
-	z-index: 9998;
+	z-index: 9997;
 	position: absolute;
 	width: 50%;
 	height: 100%;
@@ -78,7 +76,6 @@ body {
 	flex-flow: column;
 	justify-content: space-around;
 	align-items: center;
-	transition: .5s;
 }
 
 .upgrades, .abilities {
@@ -142,7 +139,6 @@ body {
 }
 
 .end {
-	opacity: 0;
 	z-index: 9999;
 	position: absolute;
 	width: 50%;
@@ -152,7 +148,6 @@ body {
 	display: none;
 	justify-content: center;
 	align-items: center;
-	transition: .5s;
 }
 
 .end button {

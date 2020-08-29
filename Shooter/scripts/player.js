@@ -53,12 +53,12 @@ Player.prototype.takeDamage = function (damage) {
 
 Player.prototype.setLife = function(life) {
 	if(life) this.life += life;
-	lifeBox.innerHTML = `ОЗ: <br>${this.life}`;
+	$('#lifeBox').html(`ОЗ: <br>${this.life}`);
 }
 
 Player.prototype.setPoints = function(points) {
 	if(points) this.points += points;
-	pointsBox.innerHTML = `Очков: ${this.points}`;
+	$('#pointsBox').html(`Очков: ${this.points}`);
 }
 
 Player.prototype.upgrade = function(up) {
@@ -66,26 +66,30 @@ Player.prototype.upgrade = function(up) {
 		case 'damage':
 			if(this.damage < damageUpMax) {
 				this.damage++;
-				nextStageMenu.querySelector(`#${up}`).innerHTML = `Урон: ${this.damage}/5 +`;
+				player.setPoints(-1);
+				$(`#nextStageMenu #${up}`).html(`Урон: ${this.damage}/5 +`);
 			}
 			break;
 		case 'hp':
 			if(this.maxLife < hpUpMax) {
-			this.maxLife += 10;
+				this.maxLife += 10;
 				this.setLife(10);
-				nextStageMenu.querySelector(`#${up}`).innerHTML = `ОЗ: ${this.maxLife}/200 +`;
+				player.setPoints(-1);
+				$(`#nextStageMenu #${up}`).html(`ОЗ: ${this.maxLife}/200 +`);
 			}
 			break;
 		case 'speed':
 			if(this.speed < speedUpMax) {
 				this.speed++;
-				nextStageMenu.querySelector(`#${up}`).innerHTML = `Скорость: ${this.speed}/5 +`;
+				player.setPoints(-1);
+				$(`#nextStageMenu #${up}`).html(`Скорость: ${this.speed}/5 +`);
 			}
 			break;
 		case 'defense':
 			if(this.defense < defenseUpMax) {
 				this.defense++;
-				nextStageMenu.querySelector(`#${up}`).innerHTML = `Броня: ${this.defense}/4 +`;
+				player.setPoints(-1);
+				$(`#nextStageMenu #${up}`).html(`Броня: ${this.defense}/4 +`);
 			}
 			break;
 	}
@@ -99,9 +103,6 @@ Player.prototype.learn = function(ability) {
 			break;
 		case 'regen':
 			this.abilities.push(new Regeneration());
-			break;
-		case 'pierce':
-			this.abilities.push(new Pierce());
 			break;
 		case 'doubleShot':
 			this.abilities.push(new DoubleShot());

@@ -1,30 +1,20 @@
-const mainMenu = document.getElementById('mainMenu');
-const nextStageMenu = document.getElementById('nextStageMenu');
-const abilitiesBox = document.getElementById('abilitiesBox');
-const startButton = document.getElementById('startButton');
-const endScreen = document.getElementById('end');
-const endButton = document.getElementById('endButton');
-
 var mainMenuVision = true;
 var stageStarted = true;
 
 function closeMainMenu() {
 	mainMenuVision = false;
-	mainMenu.style.opacity = 0;
-	setTimeout(() => mainMenu.style.display = 'none', 500);
+	$('#mainMenu').fadeOut(500);
 	enemySpawn();
 }
 
 function showNextStageMenu() {
 	stageStarted = false;
-	nextStageMenu.style.display = 'flex';
-	setTimeout(() => nextStageMenu.style.opacity = 1, 500);
+	$('#nextStageMenu').fadeIn(500).css('display', 'flex');
 }
 
 function showEndScreen() {
 	stageStarted = false;
-	endScreen.style.display = 'flex';
-	setTimeout(() => endScreen.style.opacity = 1, 500);
+	$('#endScreen').fadeIn(500).css('display', 'flex');
 }
 
 function animate() {
@@ -50,6 +40,6 @@ function animate() {
 	}
 }
 
-startButton.addEventListener('click', animate);
-nextStageMenu.addEventListener('click', checkAction);
-endButton.addEventListener('click', () => location.reload());
+$('#startButton').on('click', animate);
+$('#nextStageMenu').on('click', checkAction);
+$('#endButton').on('click', () => location.reload());
