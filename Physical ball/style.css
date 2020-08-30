@@ -12,3 +12,12 @@ body {
 *:before {
 	margin: 0;
 }
+
+#add, #gravity {
+	position: absolute;
+	margin: 15px;
+}
+
+#gravity {
+	left: 200px;
+}
