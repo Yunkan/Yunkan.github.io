@@ -144,9 +144,11 @@ Bullet.prototype.draw = function(i) {
 const bulletArray = [];
 
 const bulletSpawn = setInterval(() => {
-	if(player.doubleShot) {
-		bulletArray.push(new Bullet(player.x + player.w / 4 - bulletWidth / 2, player.y, bulletWidth, bulletHeight));
-		bulletArray.push(new Bullet(player.x + player.w - bulletWidth, player.y, bulletWidth, bulletHeight));
-	} else 
-		bulletArray.push(new Bullet(player.x + player.w / 2 - bulletWidth / 2, player.y, bulletWidth, bulletHeight));
+	if(stageStarted) {
+		if(player.doubleShot) {
+			bulletArray.push(new Bullet(player.x + player.w / 4 - bulletWidth / 2, player.y, bulletWidth, bulletHeight));
+			bulletArray.push(new Bullet(player.x + player.w - bulletWidth, player.y, bulletWidth, bulletHeight));
+		} else 
+			bulletArray.push(new Bullet(player.x + player.w / 2 - bulletWidth / 2, player.y, bulletWidth, bulletHeight));
+	}
 }, 200 - player.speed * 20);
