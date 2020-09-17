@@ -13,7 +13,7 @@ const mouse = {
 	y: 0,
 };
 
-var stage = 5;
+var stage = 1;
 
 const playerWidth = window.matchMedia("(max-width: 400px)").matches ? 15 : 30;
 const playerHeight = window.matchMedia("(max-width: 400px)").matches ? 25 : 50;
