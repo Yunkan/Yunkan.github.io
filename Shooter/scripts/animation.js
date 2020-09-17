@@ -34,7 +34,7 @@ function animate() {
 		});
 
 		if(enemyArray.length == 0) {
-			player.setPoints(1);
+			player.setPoints(stage % 5 == 0 ? 2 : 1);
 			showNextStageMenu();
 		}
 	}

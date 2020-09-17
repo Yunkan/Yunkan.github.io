@@ -13,17 +13,22 @@ const mouse = {
 	y: 0,
 };
 
-var stage = 1;
+var stage = 5;
 
-const playerWidth = window.matchMedia("(max-width: 400px)").matches ? 22 : 30;
-const playerHeight = window.matchMedia("(max-width: 400px)").matches ? 37 : 50;
-const bulletWidth = window.matchMedia("(max-width: 400px)").matches ? 7 : 10;
-const bulletHeight = window.matchMedia("(max-width: 400px)").matches ? 15 : 20;
-const enemyWidth = window.matchMedia("(max-width: 400px)").matches ? 30 : 40;
-const enemyHeight = window.matchMedia("(max-width: 400px)").matches ? 30 : 40;
-const enemyBulletWidth = window.matchMedia("(max-width: 400px)").matches ? 7 : 10;
-const enemyBulletHeight = window.matchMedia("(max-width: 400px)").matches ? 15 : 20;
+const playerWidth = window.matchMedia("(max-width: 400px)").matches ? 15 : 30;
+const playerHeight = window.matchMedia("(max-width: 400px)").matches ? 25 : 50;
+const bulletWidth = window.matchMedia("(max-width: 400px)").matches ? 5 : 10;
+const bulletHeight = window.matchMedia("(max-width: 400px)").matches ? 10 : 20;
+const enemyWidth = window.matchMedia("(max-width: 400px)").matches ? 20 : 40;
+const enemyHeight = window.matchMedia("(max-width: 400px)").matches ? 20 : 40;
+const bossWidth = window.matchMedia("(max-width: 400px)").matches ? 50 : 100;
+const bossHeight = window.matchMedia("(max-width: 400px)").matches ? 50 : 100;
+const enemyBulletWidth = window.matchMedia("(max-width: 400px)").matches ? 5 : 10;
+const enemyBulletHeight = window.matchMedia("(max-width: 400px)").matches ? 10 : 20;
+const bossBulletWidth = window.matchMedia("(max-width: 400px)").matches ? 7.5 : 15;
+const bossBulletHeight = window.matchMedia("(max-width: 400px)").matches ? 15 : 30;
 const enemyColors = ['Blue', 'Yellow', 'Red'];
+const bossColors = ['Fiol', 'Green'];
 
 const damageUpMax = 5;
 const hpUpMax = 200;

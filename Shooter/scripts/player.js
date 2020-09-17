@@ -23,7 +23,7 @@ Player.prototype.draw = function() {
 		enemyArray.forEach((enemy, i) => {
 			if(checkCollision(this, enemy)) {
 				this.takeDamage(-enemy.damage);
-				enemyArray.splice(i, 1);
+				if(!enemy.boss) enemyArray.splice(i, 1);
 			}
 
 			enemy.bullets.forEach((bullet, i) => {
@@ -107,27 +107,37 @@ Player.prototype.learn = function(ability) {
 		case 'doubleShot':
 			this.abilities.push(new DoubleShot());
 			break;
+		case 'explosion':
+			this.abilities.push(new Explosion());
+			break;
 	}
 }
 
 const player = new Player(canvas.width / 2 - playerWidth, canvas.height - playerHeight, playerWidth, playerHeight);
 
-function Bullet(x, y, w, h) {
+function Bullet(x, y, w, h, dy = -10, dx = 0, rotate = 0) {
 	this.x = x;
 	this.y = y;
 	this.w = w;
 	this.h = h;
-	this.dy = 10;
-	this.life = 100;
+	this.dy = dy;
+	this.dx = dx;
+	this.rotate = rotate;
 	this.img = new Image();
 	this.img.src = "images/bullet.png";
 }
 
 Bullet.prototype.draw = function(i) {
-	ctx.drawImage(this.img, this.x, this.y, this.w, this.h);
-	this.y -= this.dy;
+	ctx.save();
+	ctx.translate(this.x, this.y);
+	ctx.rotate(this.rotate);
+	ctx.drawImage(this.img, -this.w / 2, -this.h / 2, this.w, this.h);
+	ctx.restore();
+	this.y += this.dy;
+	this.x += this.dx;
 
-	if(this.y + this.h <= 0) {
+
+	if(this.y + this.h <= 0 || this.y >= canvas.height || this.x + this.w <= 0 || this.x >= canvas.width) {
 		bulletArray.splice(i, 1);
 	}
 
@@ -146,7 +156,7 @@ const bulletArray = [];
 const bulletSpawn = setInterval(() => {
 	if(stageStarted) {
 		if(player.doubleShot) {
-			bulletArray.push(new Bullet(player.x + player.w / 4 - bulletWidth / 2, player.y, bulletWidth, bulletHeight));
+			bulletArray.push(new Bullet(player.x + player.w / 4 - bulletWidth / 2, player.y));
 			bulletArray.push(new Bullet(player.x + player.w - bulletWidth, player.y, bulletWidth, bulletHeight));
 		} else 
 			bulletArray.push(new Bullet(player.x + player.w / 2 - bulletWidth / 2, player.y, bulletWidth, bulletHeight));

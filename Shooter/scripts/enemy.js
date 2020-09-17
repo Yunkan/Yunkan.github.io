@@ -1,8 +1,9 @@
-function Enemy(x, y, w, h, color) {
+function Enemy(x, y, w, h, color, boss = false) {
 	this.x = x;
 	this.y = y;
 	this.w = w;
 	this.h = h;
+	this.boss = boss;
 	this.color = color;
 	this.img = new Image();
 	this.img.src = `images/enemy${this.color}.png`;
@@ -27,6 +28,20 @@ function Enemy(x, y, w, h, color) {
 			this.damage = 20;
 			this.moveSpeed = 2;
 			this.shootSpeed = 2000;
+			break;
+		case 'Fiol':
+			this.boss = true;
+			this.life = 125;
+			this.damage = 0;
+			this.moveSpeed = 1;
+			this.shootSpeed = 3000;
+			break;
+		case 'Green':
+			this.boss = true;
+			this.life = 100;
+			this.damage = 20;
+			this.moveSpeed = 2;
+			this.shootSpeed = 1000;
 			break;
 	}
 
@@ -72,7 +87,30 @@ Enemy.prototype.takeDamage = function(damage, i) {
 }
 
 Enemy.prototype.shoot = function() {
-	this.bullets.push(new EnemyBullet(this.x + this.w / 2 - 5, this.y + this.h, enemyBulletWidth, enemyBulletHeight, this.color));
+	if(!this.boss) {
+		this.bullets.push(new EnemyBullet(
+			this.x + this.w / 2 - 5, this.y + this.h,
+			enemyBulletWidth, enemyBulletHeight,
+			this.color));
+	} else {
+		switch(this.color) {
+			case 'Green':
+				for(var i = 0; i < 3; i++) {
+					this.bullets.push(new EnemyBullet(
+						this.x + this.w * i / 2.5, this.y + this.h,
+						bossBulletWidth, bossBulletHeight,
+						this.color));
+				}
+				break;
+			case 'Fiol':
+				enemyArray.push(new Enemy(
+					this.x, this.y,
+					enemyWidth, enemyHeight,
+					enemyColors[getRandom(0, enemyColors.length - 1)]
+				));
+				break;
+		}
+	}
 
 	setTimeout(e => this.shoot(e), getRandom(this.shootSpeed - 500, this.shootSpeed + 500));
 }
@@ -101,12 +139,22 @@ const enemyArray = [];
 const enemyAmount = 4;
 
 function enemySpawn() {
-	for(let i = 0; i < enemyAmount + stage; i++) {
+	if(stage % 5 != 0) {
+		for(let i = 0; i < enemyAmount + stage; i++) {
+			enemyArray.push(new Enemy(
+				getRandom(enemyWidth, canvas.width - enemyWidth),
+				getRandom(0, enemyHeight),
+				enemyWidth, enemyHeight,
+				enemyColors[getRandom(0, enemyColors.length - 1)]
+			));
+		}
+	} else {
 		enemyArray.push(new Enemy(
-			getRandom(enemyWidth, canvas.width - enemyWidth),
-			getRandom(0, enemyHeight),
-			enemyWidth, enemyHeight,
-			enemyColors[getRandom(0, enemyColors.length - 1)]
-		));
+				getRandom(enemyWidth, canvas.width - enemyWidth),
+				getRandom(0, enemyHeight),
+				bossWidth, bossHeight,
+				bossColors[getRandom(0, bossColors.length - 1)],
+				true
+			));
 	}
 }
