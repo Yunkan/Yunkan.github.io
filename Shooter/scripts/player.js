@@ -10,7 +10,6 @@ function Player(x, y, w, h) {
 	this.defense = 0;
 	this.abilities = [];
 	this.points = 0;
-	this.pierce = false;
 	this.doubleShot = false;
 	this.img = new Image();
 	this.img.src = "images/player.png";
@@ -102,13 +101,13 @@ Player.prototype.learn = function(ability) {
 			this.setLife();
 			break;
 		case 'regen':
-			this.abilities.push(new Regeneration());
+			this.abilities.push(regeneration);
 			break;
 		case 'doubleShot':
-			this.abilities.push(new DoubleShot());
+			this.abilities.push(doubleShot);
 			break;
 		case 'explosion':
-			this.abilities.push(new Explosion());
+			this.abilities.push(explosion);
 			break;
 	}
 }
@@ -123,19 +122,19 @@ function Bullet(x, y, w, h, dy = -10, dx = 0, rotate = 0) {
 	this.dy = dy;
 	this.dx = dx;
 	this.rotate = rotate;
+	this.currentFrame = 0;
 	this.img = new Image();
 	this.img.src = "images/bullet.png";
 }
 
 Bullet.prototype.draw = function(i) {
 	ctx.save();
-	ctx.translate(this.x, this.y);
+	ctx.translate(this.x + this.w / 2, this.y);
 	ctx.rotate(this.rotate);
 	ctx.drawImage(this.img, -this.w / 2, -this.h / 2, this.w, this.h);
 	ctx.restore();
 	this.y += this.dy;
 	this.x += this.dx;
-
 
 	if(this.y + this.h <= 0 || this.y >= canvas.height || this.x + this.w <= 0 || this.x >= canvas.width) {
 		bulletArray.splice(i, 1);
@@ -144,7 +143,7 @@ Bullet.prototype.draw = function(i) {
 	if(enemyArray) {
 		enemyArray.forEach((enemy, enemyIndex) => {
 			if(checkCollision(this, enemy)) {
-				if(!player.pierce) bulletArray.splice(i, 1);
+				bulletArray.splice(i, 1);
 				enemy.takeDamage(player.damage, enemyIndex);
 			}
 		});
@@ -156,7 +155,7 @@ const bulletArray = [];
 const bulletSpawn = setInterval(() => {
 	if(stageStarted) {
 		if(player.doubleShot) {
-			bulletArray.push(new Bullet(player.x + player.w / 4 - bulletWidth / 2, player.y));
+			bulletArray.push(new Bullet(player.x + player.w / 4 - bulletWidth / 2, player.y, bulletWidth, bulletHeight));
 			bulletArray.push(new Bullet(player.x + player.w - bulletWidth, player.y, bulletWidth, bulletHeight));
 		} else 
 			bulletArray.push(new Bullet(player.x + player.w / 2 - bulletWidth / 2, player.y, bulletWidth, bulletHeight));

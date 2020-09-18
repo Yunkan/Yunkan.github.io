@@ -55,8 +55,8 @@ Enemy.prototype.draw = function() {
 
 Enemy.prototype.initPoint = function() {
 	let endPoint = {
-		x: getRandom(enemyWidth, canvas.width - enemyWidth),
-		y: getRandom(0, canvas.height - enemyHeight)
+		x: getRandom(this.w, canvas.width - this.w),
+		y: getRandom(0, canvas.height - this.h)
 	}
 
 	this.dx = endPoint.x - this.x;
