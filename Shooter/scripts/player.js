@@ -122,7 +122,6 @@ function Bullet(x, y, w, h, dy = -10, dx = 0, rotate = 0) {
 	this.dy = dy;
 	this.dx = dx;
 	this.rotate = rotate;
-	this.currentFrame = 0;
 	this.img = new Image();
 	this.img.src = "images/bullet.png";
 }

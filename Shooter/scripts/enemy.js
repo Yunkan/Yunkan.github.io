@@ -112,7 +112,7 @@ Enemy.prototype.shoot = function() {
 		}
 	}
 
-	setTimeout(e => this.shoot(e), getRandom(this.shootSpeed - 500, this.shootSpeed + 500));
+	setTimeout(e => this.shoot(e), getRandom(this.shootSpeed, this.shootSpeed + 500));
 }
 
 function EnemyBullet(x, y, w, h, color) {
