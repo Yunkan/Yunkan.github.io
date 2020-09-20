@@ -187,4 +187,16 @@ body {
 	.upgrades, .abilities {
 		grid-template-columns: repeat(1, 200px);
 	}
+
+	.next_stage_menu button, .upgrades button, .abilities button {
+		font-size: 12px;
+	}
+
+	.life, .stage, .fps {
+		font-size: 20px;
+	}
+
+	.next_stage_menu .next-btn, .end button, .main_menu button {
+		font-size: 18px;
+	}
 }

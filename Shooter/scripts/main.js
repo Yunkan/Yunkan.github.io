@@ -66,13 +66,13 @@ function nextStage() {
 	stageStarted = true;
 	$('#nextStageMenu').fadeOut(500);
 	player.abilities.forEach(ability => ability());
-	player.x = canvas.width / 2;
+	player.x = canvas.width / 2 - player.w / 2;
 	player.y = canvas.height - player.h;
 	animate();
 }
 
 function getRandom(min, max) {
-	return Math.floor(min + Math.random() * (max + 1 - min));
+	return ~~(min + Math.random() * (max + 1 - min));
 }
 
 function checkCollision(obj1, obj2) {

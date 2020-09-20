@@ -91,7 +91,8 @@ Enemy.prototype.shoot = function() {
 		this.bullets.push(new EnemyBullet(
 			this.x + this.w / 2 - 5, this.y + this.h,
 			enemyBulletWidth, enemyBulletHeight,
-			this.color));
+			this.color
+		));
 	} else {
 		switch(this.color) {
 			case 'Green':
@@ -99,7 +100,8 @@ Enemy.prototype.shoot = function() {
 					this.bullets.push(new EnemyBullet(
 						this.x + this.w * i / 2.5, this.y + this.h,
 						bossBulletWidth, bossBulletHeight,
-						this.color));
+						this.color
+					));
 				}
 				break;
 			case 'Fiol':
@@ -112,7 +114,7 @@ Enemy.prototype.shoot = function() {
 		}
 	}
 
-	setTimeout(e => this.shoot(e), getRandom(this.shootSpeed, this.shootSpeed + 500));
+	setTimeout(e => this.shoot(e), getRandom(this.shootSpeed, this.shootSpeed + 1000));
 }
 
 function EnemyBullet(x, y, w, h, color) {
