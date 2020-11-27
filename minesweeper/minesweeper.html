@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Minesweeper</title>
+	<style>
+		html {
+			cursor: url(cursor.png), auto;
+		}
+
+		body {
+			background-image: url(bg.jpg_large);
+			background-size: cover;
+			background-attachment: fixed;
+			color: #fff;
+		}
+
+		#cnv {
+			background-color: #ccc;
+		}
+
+		.container {
+			display: flex;
+			flex-direction: column;
+			width: 200px;
+			margin-bottom: 1em;
+		}
+
+		button {
+			padding: .5em 1em;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<label for="Cols">Колонки:</label>
+		<input type="number" min="10" value="10" placeholder="Cols" id="cols">
+		<label for="Cols">Строки:</label>
+		<input type="number" min="10" value="10" placeholder="Rows" id="rows">
+		<span id="minesBox">Осталось мин: 0</span>
+		<button id="startBtn">Старт(R)</button>
+	</div>
+
+	<canvas id="cnv"></canvas>
+
+	<script>
+		const ctx = cnv.getContext('2d');
+
+		const rect_width = 40;
+		const rect_height = 40;
+		const gameMap = [];
+		const mapSize = {};
+		const minesImg = [new Image(), new Image(), new Image()];
+		const img = new Image();
+		const field = new Image();
+
+		minesImg[0].src = 'blue.png';
+		minesImg[1].src = 'green.png';
+		minesImg[2].src = 'red.png';
+		img.src = 'tabl.png';
+		field.src = 'grass.jpg';
+
+		let firstClick = true;
+		let loose = false;
+		let mines = 0;
+		let fields = 0;
+		let longTouch = false;
+
+		var timer;
+
+
+		function getRandom(min, max) {
+			return Math.floor(min + Math.random() * (max + 1 - min));
+		}
+
+		function drawRect(x, y, w, h, opacity = '.2') {
+			ctx.drawImage(field, x, y, w, h);
+			if(firstClick) {
+				ctx.strokeStyle = '#aaa';
+				ctx.strokeRect(x, y, w, h);
+			}
+			ctx.fillStyle = `rgba(0, 0, 0, ${opacity})`;
+			ctx.fillRect(x, y, w, h);
+		}
+
+		function drawField(cols, rows) {
+			firstClick = true;
+			loose = false;
+			minesBox.innerHTML = 'Осталось мин: 0';
+			mapSize.cols = cols;
+			mapSize.rows = rows;
+
+			cnv.width = cols * rect_width;
+			cnv.height = rows * rect_height;
+
+			for(let i = 0; i < cols; i++) {
+				gameMap[i] = [];
+				for(let j = 0; j < rows; j++) {
+					gameMap[i][j] = {
+						value: 'o',
+						open: false,
+						flag: false,
+						color: '#000'
+					};
+					drawRect(i * rect_width, j * rect_height, rect_width, rect_height);
+				}
+			}
+		}
+
+		function openMap(i, j, value) {
+			if(!gameMap[i][j].open) {
+				fields--;
+				const x = i * rect_width + 8;
+				const y = j * rect_height + 32;
+				drawRect(x - 7, y - 31, rect_width - 2, rect_height - 2, 0);
+				ctx.font = '36px Arial';
+				ctx.fillStyle = gameMap[i][j].color;
+				ctx.fillText(value, x, y);
+				gameMap[i][j].open = true;
+			}
+		}
+
+		function drawFlag(i, j) {
+			const x = i * rect_width;
+			const y = j * rect_height;
+
+			drawRect(x + 1, y + 1, rect_width - 2, rect_height - 2);
+			if(!gameMap[i][j].flag) {
+				ctx.drawImage(img, x, y, rect_width, rect_height);
+			}
+		}
+
+		function checkMines(x, y) {
+			const cell = gameMap[x][y];
+			let neighbors = ' ';
+			x--;
+			y--;
+
+			for(let i = x; i < x + 3; i++) {
+				for(let j = y; j < y + 3; j++) {
+					let $x = i, $y = j;
+
+					if($x == -1 || $x == mapSize.cols || $y == -1 || $y == mapSize.rows) continue;
+					if(gameMap[$x][$y].value == 'X') neighbors++;
+				}
+			}
+
+			switch(neighbors) {
+				case 1:
+					cell.color = '#0024FF';
+					break;
+				case 2:
+					cell.color = '#104407';
+					break;
+				case 3:
+					cell.color = '#C61010';
+					break;
+				case 4:
+					cell.color = '#091C8D';
+					break;
+				case 5:
+					cell.color = '#852B2B';
+					break;
+				case 6:
+					cell.color = '#13BE94';
+					break;
+				case 7:
+					cell.color = '#000';
+					break;
+				case 8:
+					cell.color = '#696969';
+					break;
+			}
+
+			return neighbors;
+		}
+
+		function checkEmpties(x, y) {
+			if(gameMap[x][y].value != ' ') {
+				openMap(x, y, gameMap[x][y].value);
+				return;
+			}
+
+			x--;
+			y--;
+
+			for(let i = x; i < x + 3; i++) {
+				for(let j = y; j < y + 3; j++) {
+					let $x = i, $y = j;
+
+					if($x == -1 || $x == mapSize.cols || $y == -1 || $y == mapSize.rows || ($x == x + 1 && $y == y + 1)) continue;
+
+					if(gameMap[$x][$y].open || gameMap[$x][$y].flag) continue;
+					
+					openMap($x, $y, gameMap[$x][$y].value);
+
+					if(gameMap[$x][$y].value == ' ')
+						checkEmpties($x, $y);
+				}
+			}
+		}
+
+		function generateMap(mouseX, mouseY) {
+			mines = Math.floor(mapSize.cols * mapSize.rows * 0.2);
+			minesBox.innerHTML = `Осталось мин: ${mines}`;
+
+			gameMap[mouseX][mouseY].value = ' ';
+
+			for(let i = 0; i < mines; i++) {
+				let x = getRandom(0, mapSize.cols - 1);
+				let y = getRandom(0, mapSize.rows - 1);
+				if(x >= mouseX - 1 && x <= mouseX + 1 && y >= mouseY - 1 && y <= mouseY + 1 || gameMap[x][y].value == 'X')
+					i--;
+				else 
+					gameMap[x][y].value = 'X';
+			}
+
+			for(let i = 0; i < mapSize.cols; i++) {
+				for(let j = 0; j < mapSize.rows; j++) {
+					if(gameMap[i][j].value == 'o') {
+						gameMap[i][j].value = checkMines(i, j);
+					}
+				}
+			}
+
+			fields = mapSize.cols * mapSize.rows - mines;
+		}
+
+		function openMines() {
+			for(let i = 0; i < mapSize.cols; i++) {
+				for(let j = 0; j < mapSize.rows; j++) {
+					if(gameMap[i][j].value == 'X') {
+						const x = i * rect_width;
+						const y = j * rect_height;
+						drawRect(x + 1, y + 1, rect_width - 2, rect_height - 2);
+						ctx.drawImage(minesImg[getRandom(0, minesImg.length - 1)], x + 3, y + 3, rect_width - 6, rect_height - 6);
+					}
+				}
+			}
+			minesBox.innerHTML = 'Осталось мин: 0';
+		}
+
+		function exploreRect(e) {
+			e.preventDefault();
+
+			let x = e.offsetX;
+			let y = e.offsetY;
+
+			x = Math.floor(x / rect_width);
+			y = Math.floor(y / rect_height);
+
+			if(firstClick) {
+				firstClick = false;
+				generateMap(x, y);
+			}
+
+			if(!loose && fields > 0) {
+				if(gameMap[x][y].value == 'X' && e.which == 1 && !gameMap[x][y].flag) {
+					openMines();
+					alert('Лох!');
+					loose = true;
+				}
+				if(!loose) {
+					switch(e.which) {
+						case 1: if(!gameMap[x][y].flag) {
+									openMap(x, y, gameMap[x][y].value);
+									checkEmpties(x, y);
+								}
+								break;
+						case 3: if(gameMap[x][y].flag) {
+									drawFlag(x, y);
+									gameMap[x][y].flag = false;
+									minesBox.innerHTML = `Осталось мин: ${++mines}`;
+								} else if(mines > 0 && !gameMap[x][y].open) {
+									drawFlag(x, y);
+									gameMap[x][y].flag = true;
+									minesBox.innerHTML = `Осталось мин: ${--mines}`;
+								}
+								break; 
+					}
+
+					if(fields == 0) {
+						openMines();
+						alert('Красава!');
+					}
+				}
+			}
+		}
+
+		function reloadGame(e) {
+			if(e.keyCode == 114 || e.keyCode == 1082) {
+				drawField(+cols.value, +rows.value);
+			}
+		}
+
+		startBtn.addEventListener('click', () => drawField(+cols.value, +rows.value));
+		cnv.addEventListener('click', exploreRect);
+		cnv.addEventListener('contextmenu', exploreRect);
+		window.addEventListener('load', () => drawField(+cols.value, +rows.value));
+		window.addEventListener('keypress', reloadGame);
+	</script>
+</body>
+</html>

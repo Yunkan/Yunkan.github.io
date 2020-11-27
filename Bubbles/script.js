@@ -134,7 +134,7 @@ MiniBubble.prototype.move = function() {
 	this.timeToLive--;
 	this.opacity -= 1 / this.timeToLive;
 	if(this.timeToLive <= 0) {
-		this.owner.miniBubbles.splice(this.i, 1);;
+		this.owner.miniBubbles.splice(this.i, 1);
 	}
 }
 
