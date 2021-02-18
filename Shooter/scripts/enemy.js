@@ -142,29 +142,22 @@ const enemyArray = [];
 const enemyAmount = 4;
 
 function enemySpawn() {
-	// if(stage % 5 != 0) {
-	// 	for(let i = 0; i < enemyAmount + stage; i++) {
-	// 		enemyArray.push(new Enemy(
-	// 			getRandom(enemyWidth, canvas.width - enemyWidth),
-	// 			getRandom(0, enemyHeight),
-	// 			enemyWidth, enemyHeight,
-	// 			enemyColors[getRandom(0, enemyColors.length - 1)]
-	// 		));
-	// 	}
-	// } else {
-	// 	enemyArray.push(new Enemy(
-	// 			getRandom(enemyWidth, canvas.width - enemyWidth),
-	// 			getRandom(0, enemyHeight),
-	// 			bossWidth, bossHeight,
-	// 			bossColors[getRandom(0, bossColors.length - 1)],
-	// 			true
-	// 		));
-	// }
-	enemyArray.push(new Enemy(
-		getRandom(enemyWidth, canvas.width - enemyWidth),
-		getRandom(0, enemyHeight),
-		bossWidth, bossHeight,
-		'Fiol',
-		true
-	));
+	if(stage % 5 != 0) {
+		for(let i = 0; i < enemyAmount + stage; i++) {
+			enemyArray.push(new Enemy(
+				getRandom(enemyWidth, canvas.width - enemyWidth),
+				getRandom(0, enemyHeight),
+				enemyWidth, enemyHeight,
+				enemyColors[getRandom(0, enemyColors.length - 1)]
+			));
+		}
+	} else {
+		enemyArray.push(new Enemy(
+				getRandom(enemyWidth, canvas.width - enemyWidth),
+				getRandom(0, enemyHeight),
+				bossWidth, bossHeight,
+				bossColors[getRandom(0, bossColors.length - 1)],
+				true
+			));
+	}
 }

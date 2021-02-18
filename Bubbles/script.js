@@ -113,13 +113,16 @@ function MiniBubble(x, y, r, i, owner) {
 	this.r = r;
 	this.i = i;
 	this.owner = owner;
-	this.timeToLive = 100;
 	this.opacity = 1;
 }
 
 MiniBubble.prototype.draw = function() {
+	this.opacity -= 0.05;
+	if(this.opacity <= 0) {
+		this.owner.miniBubbles.splice(this.i, 1);
+	}
 	ctx.beginPath();
-	ctx.fillStyle = `rgba(225, 225, 225, ${this.opacity})`;
+	ctx.fillStyle = `rgba(225, 225, 225, ${Math.abs(this.opacity)})`;
 	ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2, false);
 	ctx.fill();
 
@@ -131,33 +134,26 @@ MiniBubble.prototype.move = function() {
 
 	this.x += this.dx;
 	this.y += this.dy;
-	this.timeToLive--;
-	this.opacity -= 1 / this.timeToLive;
-	if(this.timeToLive <= 0) {
-		this.owner.miniBubbles.splice(this.i, 1);
-	}
 }
 
 function Wave(x, y, r, i) {
 	this.x = x;
 	this.y = y;
 	this.r = r;
-	this.timeToLive = 100;
 	this.opacity = 1;
 	this.i = i;
 }
 
 Wave.prototype.draw = function() {
+	this.r += 2;
+	this.opacity -= 0.01;
+	waves = waves.filter(wave => !(wave.opacity <= 0));
+
 	ctx.beginPath();
-	ctx.strokeStyle = `rgba(225, 225, 225, ${this.opacity})`;
+	ctx.strokeStyle = `rgba(225, 225, 225, ${Math.abs(this.opacity)})`;
 	ctx.lineWidth = 2;
 	ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2, false);
 	ctx.stroke();
-
-	this.r += 2;
-	this.timeToLive--;
-	this.opacity -= 1 / this.timeToLive;
-	waves = waves.filter(wave => !(wave.timeToLive <= 0));
 }
 
 const bubbles = [];
