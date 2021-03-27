@@ -202,7 +202,7 @@ window.onkeydown = function(e) {
 		mouse.y >= 50 && mouse.y <= canvas.height - 50) {
 		switch(e.keyCode) {
 			case 32:
-				addBall(mouse.x, mouse.y);
+				addBall(e, mouse.x, mouse.y);
 				break;
 			case 71:
 				changeGravity();

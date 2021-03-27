@@ -106,7 +106,8 @@ document.querySelectorAll('.weapon button').forEach(((element, i, arr) => {
                 element.classList.add('bought');
                 element.innerHTML = 'Выбрать';
             } else if(element.dataset.heal) {
-                player.setHp(element.dataset.heal);
+                player.setHp(element.dataset.heal);                
+                player.setScore(-element.dataset.price);
             }
         }
         if(element.classList.contains('bought')) {

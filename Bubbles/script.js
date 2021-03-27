@@ -62,7 +62,6 @@ function Bubble(x, y, dx, dy, r) {
 	this.r = r;
 	this.mass = 1;
 	this.gravity = 0;
-	this.miniBubbles = [];
 	this.miniBubblesAmount = 50;
 }
 
@@ -96,15 +95,15 @@ Bubble.prototype.move = function() {
 	}
 }
 
-Bubble.prototype.die = function() {
+Bubble.prototype.die = function(index) {
 	for(let i = 0; i < this.miniBubblesAmount; i++) {
-		this.miniBubbles.push(new MiniBubble(this.x, this.y, 2, i, this));
+		miniBubbles.push(new MiniBubble(this.x, this.y, 2, i));
 	}
-	this.x = getRandom(25, canvas.width - 25);
-	this.y = getRandom(25, canvas.height - 25);
+
+	bubbles.splice(index, 1);
 }
 
-function MiniBubble(x, y, r, i, owner) {
+function MiniBubble(x, y, r, i) {
 	this.gravity = 0.1;
 	this.dx = getRandom(-10, 10);
 	this.dy = getRandom(-10, 10);
@@ -112,19 +111,19 @@ function MiniBubble(x, y, r, i, owner) {
 	this.y = y;
 	this.r = r;
 	this.i = i;
-	this.owner = owner;
 	this.opacity = 1;
 }
 
 MiniBubble.prototype.draw = function() {
 	this.opacity -= 0.05;
 	if(this.opacity <= 0) {
-		this.owner.miniBubbles.splice(this.i, 1);
+		miniBubbles.splice(this.i, 1);
+	} else {
+		ctx.beginPath();
+		ctx.fillStyle = `rgba(225, 225, 225, ${Math.abs(this.opacity)})`;
+		ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2, false);
+		ctx.fill();
 	}
-	ctx.beginPath();
-	ctx.fillStyle = `rgba(225, 225, 225, ${Math.abs(this.opacity)})`;
-	ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2, false);
-	ctx.fill();
 
 	this.move();
 }
@@ -157,24 +156,15 @@ Wave.prototype.draw = function() {
 }
 
 const bubbles = [];
-const bubblesAmount = 50;
+const miniBubbles = [];
 let waves = [];
 let bubbleDie = false;
 
-for(let i = 0; i < bubblesAmount; i++) {
-	const x = getRandom(25, canvas.width - 25);
-	const y = getRandom(25, canvas.height - 25);
-	const r = getRandom(15, 20);
-	const dx = Math.random() - 0.5;
-	const dy = Math.random() - 0.5;
-	bubbles.push(new Bubble(x, y, dx, dy, r));
-}
-
 canvas.onmousedown = function(e) {
-	bubbles.forEach(bubble => {
+	bubbles.forEach((bubble, index) => {
 		if(e.pageX <= bubble.x + bubble.r && e.pageX + bubble.r >= bubble.x &&
 		   e.pageY <= bubble.y + bubble.r && e.pageY + bubble.r >= bubble.y) {
-			bubble.die();
+			bubble.die(index);
 			bubbleDie = true;
 		}
 	});
@@ -187,11 +177,18 @@ function animate() {
 	requestAnimationFrame(animate);
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-	bubbles.forEach(bubble => {
-		bubble.draw();
-		bubble.miniBubbles.forEach(miniBubble => miniBubble.draw());
-	});
+	bubbles.forEach(bubble => bubble.draw());
+	miniBubbles.forEach(miniBubble => miniBubble.draw());
 	waves.forEach(wave => wave.draw());
 }
 
 animate();
+
+setInterval(() => {
+	const x = getRandom(25, canvas.width - 25);
+	const y = getRandom(25, canvas.height - 25);
+	const r = getRandom(15, 20);
+	const dx = Math.random() - 0.5;
+	const dy = Math.random() - 0.5;
+	bubbles.push(new Bubble(x, y, dx, dy, r));
+}, 500);

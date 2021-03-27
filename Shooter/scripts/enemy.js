@@ -31,7 +31,7 @@ function Enemy(x, y, w, h, color, boss = false) {
 			break;
 		case 'Fiol':
 			this.boss = true;
-			this.life = 10/*125*/;
+			this.life = 125;
 			this.damage = 0;
 			this.moveSpeed = 1;
 			this.shootSpeed = 3000;
