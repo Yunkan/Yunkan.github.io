@@ -3,15 +3,48 @@ body {
 	padding: 0;
 }
 
-#cnv {
-	background-color: #ddd;
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	border: 1px solid #000;
+*,
+*:before,
+*:after {
+	box-sizing: border-box;
+	outline: none;
+	user-select: none;
 }
 
-button {
-	user-select: none;
+.btn {
+	outline: none;
+	border: 2px solid #3D3D3D;
+	color: #fff;
+	background-color: #909090;
+	padding: .5em 1em;
+	margin: 1em;
+	transition: .2s;
+	cursor: pointer;
+}
+
+.btn:hover {
+	background-color: #3D3D3D;
+}
+
+.btn:disabled {
+	background-color: #D1D1D1;
+	border-color: #ADABAB;
+}
+
+#cnv {
+	border: 1px solid #000;
+	margin-left: 1em;
+}
+
+.inputs-container {
+	display: flex;
+	flex-flow: row wrap;
+}
+
+.input-block {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	margin: 0 1em 1em;
 }

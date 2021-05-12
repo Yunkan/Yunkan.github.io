@@ -6,11 +6,31 @@
 	<link rel="stylesheet" href="style.css">
 </head>
 <body>
+	<div class="interface">
+		<div class="btns-container">
+			<button class="btn" id="startBtn">Старт</button>
+			<button class="btn" id="randomBtn">Рандомная генерация</button>
+			<button class="btn" id="clearBtn">Очистить</button>
+		</div>
+		
+		<div class="inputs-container">
+			<div class="input-block">
+				<label for="cols">Колонок: <span id="colValue">70</span></label>
+				<input type="range" min="10" max="70" value="70" id="cols">
+
+			</div>
+			<div class="input-block">
+				<label for="rows">Строк: <span id="rowValue">70</span></label>
+				<input type="range" min="10" max="70" value="70" id="rows">
+			</div>
+			<div class="input-block">
+				<label for="size">Размер: <span id="sizeValue">10</span></label>
+				<input type="range" min="10" max="20" value="10" id="size">
+			</div>
+		</div>
+	</div>
+	
 	<canvas id="cnv"></canvas>
-	<button onclick="life = true;">Старт</button>
-	<button onclick="randomGenerate();">Рандомная генерация</button>
-	<button onclick="stopLife();">Очистить</button>
-	<div class="cycle">Цикл: 0</div>
 
 	<script src="script.js"></script>
 </body>
