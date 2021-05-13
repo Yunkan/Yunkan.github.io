@@ -17,17 +17,6 @@ function Player(x, y, w, h) {
 
 Player.prototype.draw = function() {
 	ctx.drawImage(this.img, this.x, this.y, this.w, this.h);
-}
-
-Player.prototype.move = function() {
-	if(canvas.width > this.x - this.w && this.x + this.w >= 0) {
-		this.x = mouse.x - this.w;
-	}
-
-	if(canvas.height > this.y - this.h && this.y + this.h >= 0){
-		this.y = mouse.y - this.h;
-	}
-
 	if(enemyArray) {
 		enemyArray.forEach((enemy, i) => {
 			if(checkCollision(this, enemy)) {
@@ -42,6 +31,16 @@ Player.prototype.move = function() {
 				}
 			})
 		});
+	}
+}
+
+Player.prototype.move = function() {
+	if(canvas.width > this.x - this.w && this.x + this.w >= 0) {
+		this.x = mouse.x - this.w;
+	}
+
+	if(canvas.height > this.y - this.h && this.y + this.h >= 0){
+		this.y = mouse.y - this.h;
 	}
 }
 
