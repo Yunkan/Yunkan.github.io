@@ -185,32 +185,32 @@ randomBtn.addEventListener('click', () => {
 
 function cellPrimaryInteract(e) {
 	if(!startLife) {
-		if(e.which == 1) {
+		if(!e.targetTouches) {
+			if(e.which == 1) {
+				mouse.draw = true;
+				population[mouse.x][mouse.y] = 1;
+				drawCell(mouse.x, mouse.y);
+			} else if(e.which == 3) {
+				mouse.clear = true;			
+				population[mouse.x][mouse.y] = 0;
+				drawCell(mouse.x, mouse.y);
+			}
+		} else {
+			mouse.x = ~~((e.targetTouches[0].clientX - e.target.offsetLeft) / cellSize);
+			mouse.y = ~~((e.targetTouches[0].clientY - e.target.offsetTop) / cellSize);
 			mouse.draw = true;
 			population[mouse.x][mouse.y] = 1;
-			drawCell(mouse.x, mouse.y);
-		} else if(e.which == 3) {
-			mouse.clear = true;			
-			population[mouse.x][mouse.y] = 0;
 			drawCell(mouse.x, mouse.y);
 		}
 	}
 }
 
-cnv.addEventListener('mousedown', cellPrimaryInteract);
-cnv.addEventListener('contextmenu', (e) => e.preventDefault());
-
-cnv.addEventListener('mouseup', (e) => {
-	mouse.draw = false;
-	mouse.clear = false;
-});
-
-cnv.addEventListener('mousemove', (e) => {
-	mouse.x = ~~(e.offsetX / cellSize);
-	mouse.y = ~~(e.offsetY / cellSize);
+function cellMoveInteract(x, y) {
+	mouse.x = x;
+	mouse.y = y;
 	for(let i = 0; i < population.length; i++) {
 		for(let j = 0; j < population[i].length; j++) {
-			if(i == mouse.x && j == mouse.y && !startLife) {
+			if(i == x && j == y && !startLife) {
 				if(mouse.draw) {
 					population[i][j] = 1;
 					drawCell(i, j);
@@ -221,6 +221,22 @@ cnv.addEventListener('mousemove', (e) => {
 			}
 		}
 	}
+}
+
+cnv.addEventListener('mousedown', cellPrimaryInteract);
+cnv.addEventListener('contextmenu', e => e.preventDefault());
+cnv.addEventListener('mouseup', e => {
+	mouse.draw = false;
+	mouse.clear = false;
+});
+cnv.addEventListener('mousemove', e => {
+	cellMoveInteract(~~(e.offsetX / cellSize), ~~(e.offsetY / cellSize));
+});
+cnv.addEventListener('touchstart', cellPrimaryInteract);
+cnv.addEventListener('touchmove', e => {
+	if(!startLife)
+		e.preventDefault();
+	cellMoveInteract(~~((e.targetTouches[0].clientX - e.target.offsetLeft) / cellSize), ~~((e.targetTouches[0].clientY - e.target.offsetTop) / cellSize));
 });
 
 clearGenerate();
