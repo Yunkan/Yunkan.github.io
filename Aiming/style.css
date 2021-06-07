@@ -1,0 +1,41 @@
+body {
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+}
+
+* {
+	user-select: none;
+}
+
+#cnv {
+	background-color: #ccc;
+}
+
+.container {
+	display: flex;
+	flex-direction: column;
+}
+
+.controls {
+	display: flex;
+}
+
+.hide {
+	display: none;
+}
+
+.control {
+	margin: 1em;
+}
+
+#btnStart {
+	padding: 1em;
+	margin: 1em;
+	cursor: pointer;
+}
+
+#scoreBox {
+	font-size: 20px;
+	margin-left: 1em;
+}

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="style.css">
+	<title>Aiming</title>
+</head>
+<body>
+	<div class="container">
+		<div class="controls">
+			<div class="control">
+				<h1>Размер целей</h1>
+				<div class="block">
+					<input type="radio" name="cellSize" id="randomSize" checked>
+					<label for="randomSize">Случайно</label>
+				</div>
+				<div class="block">
+					<input type="radio" name="cellSize" id="selectSize">
+					<label for="selectSize">Выбрать</label>
+				</div>
+				<div class="block">
+					<input type="range" name="cellSize" id="cellSize" disabled min="2" max="20">
+				</div>
+			</div>
+		</div>
+		<div id="scoreBox">Очков: 0</div>
+		<button id="btnStart">Начать</button>
+	</div>
+
+	<canvas id="cnv"></canvas>
+
+	<script src="cell.js"></script>
+	<script src="script.js"></script>
+</body>
+</html>
