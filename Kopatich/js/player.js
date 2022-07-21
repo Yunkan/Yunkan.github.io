@@ -5,7 +5,7 @@ function Player() {
     this.y = cnvHeight / 2 - this.h / 2;
     this.moveSpeed = 5;
     this.hp = 100;
-    this.score = 10000;
+    this.score = 0;
     this.moveDirection = {
         up: false,
         down: false,

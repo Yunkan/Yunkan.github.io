@@ -3,7 +3,7 @@ function Enemy(x, y) {
     this.y = y;
     this.w = 35;
     this.h = 35;
-    this.hp = getRandom(3, 8);
+    this.hp = getRandom(3, 5);
     this.speed = getRandom(1, 3);
     this.body = [];
 
@@ -141,7 +141,7 @@ const enemySpawn = () => {
     if(!paused)
     	enemies.push(new Enemy(sideCoordinates.x, sideCoordinates.y));
 
-    setTimeout(enemySpawn, 1000);
+    setTimeout(enemySpawn, 600);
 }
 
 const bloodRemove = () => {
