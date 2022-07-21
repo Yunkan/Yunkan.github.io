@@ -37,21 +37,21 @@ Weapon.prototype.getType = function() {
 			this.bulletSpeed = 30;
 			this.dmg = 1;
 			this.shoot = function() {
-				for(let i = 0; i < 10; i++)
+				for(let i = 0; i < 6; i++)
 					player.bullets.push(new Bullet(
 						player.x + player.w / 2 - 5,
 						player.y + player.h / 2 - 5,
-						mouse.x + i * getRandom(-20, 20),
-						mouse.y + i * getRandom(-20, 20),
-						4,
-						4
+						mouse.x + i * getRandom(-10, 10),
+						mouse.y + i * getRandom(-10, 10),
+						6,
+						6
 					));
 			}
 			break;
 		case 'automate':
 			this.currentCooldown = 10;
 			this.bulletSpeed = 40;
-			this.dmg = 1;
+			this.dmg = 2;
 			this.shoot = function() {
 				player.bullets.push(new Bullet(
 					player.x + player.w / 2 - 5,

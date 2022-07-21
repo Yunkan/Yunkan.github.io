@@ -21,7 +21,7 @@ const mouse = {
 }
 
 var player;
-const enemies = [];
+var enemies = [];
 const enemyBlood = [];
 
 var paused = false;

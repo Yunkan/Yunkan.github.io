@@ -62,11 +62,11 @@ Player.prototype.move = function() {
         this.x -= ~~this.moveSpeed;
     }
 
-    enemies.forEach((enemy, enemyIndex) => {
+    enemies.forEach(enemy => {
         this.dmgCooldown--;
         if(this.dmgCooldown <= 0 && checkCollision(this, enemy)) {
             this.setHp(-1);
-            this.dmgCooldown = 50;
+            this.dmgCooldown = 100;
         }
     });
 }
