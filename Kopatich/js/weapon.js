@@ -35,21 +35,23 @@ Weapon.prototype.getType = function() {
 		case 'shotgun':
 			this.currentCooldown = 50;
 			this.bulletSpeed = 30;
-			this.dmg = 2;
+			this.dmg = 1;
 			this.shoot = function() {
-				for(let i = 0; i < 5; i++)
+				for(let i = 0; i < 10; i++)
 					player.bullets.push(new Bullet(
 						player.x + player.w / 2 - 5,
 						player.y + player.h / 2 - 5,
 						mouse.x + i * getRandom(-20, 20),
-						mouse.y + i * getRandom(-20, 20)
+						mouse.y + i * getRandom(-20, 20),
+						4,
+						4
 					));
 			}
 			break;
 		case 'automate':
 			this.currentCooldown = 10;
 			this.bulletSpeed = 40;
-			this.dmg = 3;
+			this.dmg = 1;
 			this.shoot = function() {
 				player.bullets.push(new Bullet(
 					player.x + player.w / 2 - 5,
@@ -62,7 +64,7 @@ Weapon.prototype.getType = function() {
 	}
 }
 
-function Bullet(x, y, endX, endY, w = 5, h = 5) {
+function Bullet(x, y, endX, endY, w = 8, h = 8) {
     this.x = x;
     this.y = y;
     this.w = w;
@@ -86,13 +88,6 @@ Bullet.prototype.move = function(index) {
     if(this.y >= cnvHeight - this.h || this.y <= -this.h || this.x >= cnvWidth - this.w || this.x <= -this.w) {
         player.bullets.splice(index, 1);
     }
-
-    enemies.forEach((enemy, enemyIndex) => {
-        if(checkCollision(this, enemy)) {
-            player.bullets.splice(index, 1);
-            enemy.takeDamage(player.weapon.dmg, enemyIndex, this);
-        }
-    });
 
     this.x += ~~this.dx;
     this.y += ~~this.dy;

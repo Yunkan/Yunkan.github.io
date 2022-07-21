@@ -1,19 +1,11 @@
 function Enemy(x, y) {
     this.x = x;
     this.y = y;
-    this.w = 25;
-    this.h = 25;
+    this.w = 35;
+    this.h = 35;
     this.hp = getRandom(3, 8);
-
-    this.body = [
-                    ['g', 'g', 'g', 'g', 'g'],
-                    ['g', 'g', 'g', 'g', 'g'],
-                    ['g', 'g', 'g', 'g', 'g'],
-                    ['g', 'g', 'g', 'g', 'g'],
-                    ['g', 'g', 'g', 'g', 'g']
-                ];
-
     this.speed = getRandom(1, 3);
+    this.body = [];
 
     this.initLine();
 }
@@ -21,15 +13,10 @@ function Enemy(x, y) {
 Enemy.prototype.draw = function() {
     ctx.fillStyle = '#255b0b';
     ctx.fillRect(this.x, this.y, this.w, this.h);
-    for(let i = 0; i < this.body.length; i++) {
-        for(let j = 0; j < this.body[i].length; j++) {
-            if(this.body[i][j] === 'b') {
-                ctx.fillStyle = '#AE0101';
-                ctx.fillRect(~~(this.x + j * this.w / 5), ~~(this.y + i * this.h / 5), ~~(this.w / 5), ~~(this.h / 5));
-            }
-        }
-    }
-
+    this.body.forEach(part => {
+    	ctx.fillStyle = '#AE0101';
+    	ctx.fillRect(part.x, part.y, part.w, part.h);
+    });
     this.move();
 }
 
@@ -51,33 +38,48 @@ Enemy.prototype.move = function() {
 
     this.x += ~~this.dx;
     this.y += ~~this.dy;
+
+    this.body.forEach(part => {
+    	part.x += ~~this.dx;
+    	part.y += ~~this.dy;
+    });
+
+    player.bullets.forEach((bullet, bulletIndex) => {
+    	if(checkCollision(bullet, this)) {
+    		const enemyIndex = enemies.findIndex(enemy => enemy === this);
+    		this.takeDamage(player.weapon.dmg, enemyIndex, bullet);
+
+    		player.bullets.splice(bulletIndex, 1);
+    	}
+    });
 }
 
 Enemy.prototype.takeDamage = function(dmg, index, bullet = { x: this.x - this.w / 2, y: this.y - this.h / 2, dx: getRandom(-40, 40), dy: getRandom(-40, 40) }) {
     this.hp -= dmg;
     cnv.classList.add('shake-little');
     setTimeout(() => cnv.classList.remove('shake-little'), 100);
+    
+    this.body.push({
+        	x: getRandom(this.x, this.x + this.w / 1.25),
+        	y: getRandom(this.y, this.y + this.h / 1.25),
+        	w: getRandom(5, 10),
+        	h: getRandom(5, 10)
+        });
 
     for(let i = 0; i < dmg * 2; i++) {
-        const part = {
-            i: getRandom(0, this.body.length - 1),
-            j: getRandom(0, this.body.length - 1)
-        };
-
-        this.body[part.i][part.j] = 'b';
         enemyBlood.push(new Blood(this.x + this.w / 2, this.y + this.h / 2, bullet));
     }
 
     if(this.hp <= 0) {
         for(let i = 0; i < 25; i++)
-            explosionParticles.push(new ExplosionParticle(this.x + this.w / 2, this.y + this.h / 2, getRandom(4, 8), getRandom(4, 8), '#AE0101', 6));
+            explosionParticles.push(new ExplosionParticle(this.x + this.w / 2, this.y + this.h / 2, getRandom(6, 10), getRandom(6, 10), '#AE0101', 8));
         enemies.splice(index, 1);
         player.setScore(getRandom(10, 20));
     }
 }
 
 function Blood(x, y, bullet) {
-    this.r = getRandom(2, 4);
+    this.r = getRandom(2, 6);
     this.x = x - this.r / 2;
     this.y = y - this.r / 2;
 

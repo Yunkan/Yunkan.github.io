@@ -1,11 +1,11 @@
 function Player() {
-    this.w = 25;
-    this.h = 25;
+    this.w = 35;
+    this.h = 35;
     this.x = cnvWidth / 2 - this.w / 2;
     this.y = cnvHeight / 2 - this.h / 2;
     this.moveSpeed = 5;
     this.hp = 100;
-    this.score = 0;
+    this.score = 10000;
     this.moveDirection = {
         up: false,
         down: false,
