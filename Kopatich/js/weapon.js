@@ -24,7 +24,12 @@ Weapon.prototype.getType = function() {
 			this.bulletSpeed = 35;
 			this.dmg = 2;
 			this.shoot = function() {
-				player.bullets.push(new Bullet(player.x + player.w / 2 - 5, player.y + player.h / 2 - 5, mouse.x, mouse.y));
+				player.bullets.push(new Bullet(
+					player.x + player.w / 2 - 5,
+					player.y + player.h / 2 - 5,
+					mouse.x,
+					mouse.y
+				));
 			}
 			break;
 		case 'shotgun':
@@ -57,7 +62,7 @@ Weapon.prototype.getType = function() {
 	}
 }
 
-function Bullet(x, y, endX, endY, w = 10, h = 10) {
+function Bullet(x, y, endX, endY, w = 5, h = 5) {
     this.x = x;
     this.y = y;
     this.w = w;
@@ -69,8 +74,10 @@ function Bullet(x, y, endX, endY, w = 10, h = 10) {
 }
 
 Bullet.prototype.draw = function(index) {
+	ctx.beginPath();
     ctx.fillStyle = '#ffc900';
     ctx.roundRect(~~this.x, ~~this.y, this.w, this.h, 5).fill();
+    ctx.closePath();
 
     this.move(index);
 }

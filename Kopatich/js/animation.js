@@ -5,10 +5,10 @@ function animate() {
 
         ctx.beginPath();
 
+        enemyBlood.forEach(blood => blood.draw());
         player.draw();
         player.bullets.forEach((bullet, index) => bullet.draw(index));
         enemies.forEach(enemy => enemy.draw());
-        enemyBlood.forEach(blood => blood.draw());
         explosionParticles.forEach((particle, index) => particle.draw(index));
 
         requestAnimationFrame(animate);

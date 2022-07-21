@@ -20,6 +20,10 @@ const mouse = {
     y: 0
 }
 
+var player;
+const enemies = [];
+const enemyBlood = [];
+
 var paused = false;
 
 window.onkeydown = function(e) {

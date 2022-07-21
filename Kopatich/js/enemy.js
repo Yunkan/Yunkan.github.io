@@ -1,8 +1,8 @@
 function Enemy(x, y) {
     this.x = x;
     this.y = y;
-    this.w = 50;
-    this.h = 50;
+    this.w = 25;
+    this.h = 25;
     this.hp = getRandom(3, 8);
 
     this.body = [
@@ -70,14 +70,14 @@ Enemy.prototype.takeDamage = function(dmg, index, bullet = { x: this.x - this.w 
 
     if(this.hp <= 0) {
         for(let i = 0; i < 25; i++)
-            explosionParticles.push(new ExplosionParticle(this.x + this.w / 2, this.y + this.h / 2, 10, 10, '#AE0101', 12));
+            explosionParticles.push(new ExplosionParticle(this.x + this.w / 2, this.y + this.h / 2, getRandom(4, 8), getRandom(4, 8), '#AE0101', 6));
         enemies.splice(index, 1);
         player.setScore(getRandom(10, 20));
     }
 }
 
 function Blood(x, y, bullet) {
-    this.r = getRandom(2, 8);
+    this.r = getRandom(2, 4);
     this.x = x - this.r / 2;
     this.y = y - this.r / 2;
 
@@ -100,6 +100,7 @@ Blood.prototype.draw = function() {
     ctx.fillStyle = '#f00';
     ctx.arc(~~this.x, ~~this.y, this.r, 0, 2 * Math.PI);
     ctx.fill();
+    ctx.closePath();
     this.move();
 }
 
@@ -110,8 +111,6 @@ Blood.prototype.move = function() {
     }
     this.dc -= Math.sqrt(this.dx ** 2 + this.dy ** 2);
 }
-
-const enemies = [];
 
 const enemySpawn = () => {
     let side = getRandom(0, 3);
@@ -144,10 +143,6 @@ const enemySpawn = () => {
 
     setTimeout(enemySpawn, 1000);
 }
-
-// enemies.push(new Enemy(1000, 400));
-
-const enemyBlood = [];
 
 const bloodRemove = () => {
 	if(enemyBlood.length > 0) {

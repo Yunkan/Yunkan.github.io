@@ -1,10 +1,9 @@
 function Player() {
-    this.w = 50;
-    this.h = 50;
+    this.w = 25;
+    this.h = 25;
     this.x = cnvWidth / 2 - this.w / 2;
     this.y = cnvHeight / 2 - this.h / 2;
-    this.dx = 10;
-    this.dy = 10;
+    this.moveSpeed = 5;
     this.hp = 100;
     this.score = 0;
     this.moveDirection = {
@@ -34,11 +33,13 @@ Player.prototype.draw = function() {
             ctx.fill();
         }
     } else {
+        ctx.beginPath();
         ctx.fillStyle = '#F57309';
         ctx.fillRect(~~this.x, ~~this.y, this.w, this.h);
         ctx.fillStyle = '#ffc104';
         ctx.arc(~~(this.x + this.w / 2), ~~(this.y + this.h / 2), ~~(this.w / 2.5), 0, Math.PI * 2);
         ctx.fill();
+        ctx.closePath();
     }
 
     this.move();
@@ -49,16 +50,16 @@ Player.prototype.draw = function() {
 
 Player.prototype.move = function() {
 	if(this.moveDirection.up && this.y >= 0) {
-        this.y -= ~~this.dy;
+        this.y -= ~~this.moveSpeed;
     }
     if(this.moveDirection.down && this.y <= cnvHeight - this.h) {
-        this.y += ~~this.dy;
+        this.y += ~~this.moveSpeed;
     }
     if(this.moveDirection.right && this.x <= cnvWidth - this.w) {
-        this.x += ~~this.dx;
+        this.x += ~~this.moveSpeed;
     }
     if(this.moveDirection.left && this.x >= 0) {
-        this.x -= ~~this.dx;
+        this.x -= ~~this.moveSpeed;
     }
 
     enemies.forEach((enemy, enemyIndex) => {
@@ -82,7 +83,7 @@ Player.prototype.setHp = function(points) {
     if(this.hp >= 0) document.querySelector('.hp-bar').innerHTML = `HP: ${this.hp}`;
     if(this.hp < 0) {
         document.querySelector('.game-over').classList.add('front');
-        this.dx = this.dy = 0;
+        this.moveSpeed = 0;
     }
 }
 
@@ -95,7 +96,7 @@ Player.prototype.getWeapon = function(weapon) {
     this.weapon = this.boughtWeapons[weapon];
 }
 
-const player = new Player();
+player = new Player();
 document.querySelectorAll('.weapon button').forEach(((element, i, arr) => {
     element.addEventListener('click', (e) => {
         if(player.score >= element.dataset.price && !element.classList.contains('bought')) {
