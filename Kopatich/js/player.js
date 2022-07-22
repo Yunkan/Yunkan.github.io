@@ -23,6 +23,7 @@ Player.prototype.draw = function() {
     if(this.hp <= 0) {
         ctx.fillStyle = '#f00';
         for(let i = 0; i < getRandom(10, 15); i++) {
+        	ctx.beginPath();
             ctx.arc(
                 this.x + i * getRandom(-5, 5) + this.w / 2,
                 this.y + i * getRandom(-5, 5) + this.h / 2,
@@ -65,7 +66,7 @@ Player.prototype.move = function() {
     enemies.forEach(enemy => {
         this.dmgCooldown--;
         if(this.dmgCooldown <= 0 && checkCollision(this, enemy)) {
-            this.setHp(-1);
+            this.setHp(-enemy.dmg);
             this.dmgCooldown = 100;
         }
     });

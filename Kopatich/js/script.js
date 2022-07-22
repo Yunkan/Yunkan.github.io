@@ -23,6 +23,38 @@ const mouse = {
 var player;
 var enemies = [];
 const enemyBlood = [];
+const enemyType = [
+	{
+		hp: 3,
+		speed: 3,
+		dmg: 1,
+		w: 20,
+		h: 20,
+		color: '#378711'
+	},
+	{
+		hp: 5,
+		speed: 2,
+		dmg: 2,
+		w: 35,
+		h: 35,
+		color: '#255b0b'
+	},
+	{
+		hp: 10,
+		speed: 1.5,
+		dmg: 3,
+		w: 45,
+		h: 45,
+		color: '#0F2903'
+	},
+];
+
+const enemyEffect = [
+	{
+
+	}
+];
 
 var paused = false;
 
