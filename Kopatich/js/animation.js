@@ -7,8 +7,9 @@ function animate() {
 
         enemyBlood.forEach(blood => blood.draw());
         player.bullets.forEach((bullet, index) => bullet.draw(index));
-        player.weapon.draw();
-        player.draw();
+        if(player.hp > 0)
+        	player.weapon.draw();
+		player.draw();
         enemies.forEach(enemy => enemy.draw());
         explosionParticles.forEach((particle, index) => particle.draw(index));
 

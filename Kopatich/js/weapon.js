@@ -38,7 +38,7 @@ Weapon.prototype.getType = function() {
 			this.bulletSpeed = 30;
 			this.dmg = 1;
 			this.shoot = function() {
-				for(let i = 0; i < 6; i++)
+				for(let i = 0; i < 10; i++)
 					player.bullets.push(new Bullet(
 						player.x + player.w / 2 - 5,
 						player.y + player.h / 2 - 5,

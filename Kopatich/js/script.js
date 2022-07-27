@@ -26,7 +26,7 @@ const enemyBlood = [];
 const enemyType = [
 	{
 		hp: 3,
-		speed: 3,
+		speed: 4,
 		dmg: 1,
 		w: 20,
 		h: 20,
@@ -42,18 +42,12 @@ const enemyType = [
 	},
 	{
 		hp: 10,
-		speed: 1.5,
+		speed: 1,
 		dmg: 3,
 		w: 45,
 		h: 45,
 		color: '#0F2903'
 	},
-];
-
-const enemyEffect = [
-	{
-
-	}
 ];
 
 var paused = false;
