@@ -3,6 +3,10 @@ function Player() {
     this.h = 35;
     this.x = cnvWidth / 2 - this.w / 2;
     this.y = cnvHeight / 2 - this.h / 2;
+    this.center = {
+        x: this.x + this.w / 2,
+        y: this.y + this.h / 2
+    }
     this.moveSpeed = 5;
     this.hp = 100;
     this.score = 0;
@@ -36,9 +40,9 @@ Player.prototype.draw = function() {
     } else {
         ctx.beginPath();
         ctx.fillStyle = '#F57309';
-        ctx.fillRect(~~this.x, ~~this.y, this.w, this.h);
+        ctx.fillRect(this.x, this.y, this.w, this.h);
         ctx.fillStyle = '#ffc104';
-        ctx.arc(~~(this.x + this.w / 2), ~~(this.y + this.h / 2), ~~(this.w / 2.5), 0, Math.PI * 2);
+        ctx.arc(this.center.x, this.center.y, (this.w / 2.5), 0, Math.PI * 2);
         ctx.fill();
         ctx.closePath();
     }
@@ -51,16 +55,21 @@ Player.prototype.draw = function() {
 
 Player.prototype.move = function() {
 	if(this.moveDirection.up && this.y >= 0) {
-        this.y -= ~~this.moveSpeed;
+        this.y -= this.moveSpeed;
     }
     if(this.moveDirection.down && this.y <= cnvHeight - this.h) {
-        this.y += ~~this.moveSpeed;
+        this.y += this.moveSpeed;
     }
     if(this.moveDirection.right && this.x <= cnvWidth - this.w) {
-        this.x += ~~this.moveSpeed;
+        this.x += this.moveSpeed;
     }
     if(this.moveDirection.left && this.x >= 0) {
-        this.x -= ~~this.moveSpeed;
+        this.x -= this.moveSpeed;
+    }
+
+    this.center = {
+        x: this.x + this.w / 2,
+        y: this.y + this.h / 2
     }
 
     enemies.forEach(enemy => {
@@ -98,7 +107,7 @@ Player.prototype.getWeapon = function(weapon) {
 }
 
 player = new Player();
-document.querySelectorAll('.weapon button').forEach(((element, i, arr) => {
+document.querySelectorAll('.item button').forEach(((element, i, arr) => {
     element.addEventListener('click', (e) => {
         if(player.score >= element.dataset.price && !element.classList.contains('bought')) {
             if(element.dataset.weapon) {

@@ -3,8 +3,6 @@ function animate() {
         cnv.width = cnvWidth;
         cnv.height = cnvHeight;
 
-        ctx.beginPath();
-
         enemyBlood.forEach(blood => blood.draw());
         player.bullets.forEach((bullet, index) => bullet.draw(index));
         if(player.hp > 0)
@@ -12,7 +10,7 @@ function animate() {
 		player.draw();
         enemies.forEach(enemy => enemy.draw());
         explosionParticles.forEach((particle, index) => particle.draw(index));
-
+        
         requestAnimationFrame(animate);
     }
 }

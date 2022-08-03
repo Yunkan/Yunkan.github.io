@@ -16,44 +16,52 @@
         <a href="index.html">Начать сначала</a>
     </div>
 	<div class="main-menu container front">
-        <h1>Копатыч: после</h1>
+        <h1 class="title">Копатыч: после</h1>
         <button>Укуси меня пчела!</button>
     </div>
     <div class="pause-menu container">
         <h1>Пауза</h1>
-        <div class="weapons">
-            <div class="weapon">
-                <p>Бинты</p>
-                <button data-price="50" data-heal="25">Купить(50)</button>
+
+        <div class="items">
+            <div class="section">
+                <h2 class="section-title">Здоровье</h2>
+                <div class="item">
+                    <p>Бинты</p>
+                    <button data-price="50" data-heal="25">Купить(50)</button>
+                </div>
+                <div class="item">
+                    <p>Аптечка</p>
+                    <button data-price="100" data-heal="100">Купить(100)</button>
+                </div>
             </div>
-            <div class="weapon">
-                <p>Аптечка</p>
-                <button data-price="100" data-heal="100">Купить(100)</button>
-            </div>
-            <div class="weapon">
-                <p>Пистолет</p>
-                <button data-weapon="pistol" class="bought selected">Выбрано</button>
-            </div>
-            <div class="weapon">
-                <p>Дигл</p>
-                <button data-price="500" data-weapon="deagle">Купить(500)</button>
-            </div>
-            <div class="weapon">
-                <p>Дробовик</p>
-                <button data-price="1000" data-weapon="shotgun">Купить(1000)</button>
-            </div>
-            <div class="weapon">
-                <p>Автомат</p>
-                <button data-price="1500" data-weapon="automate">Купить(1500)</button>
-            </div>
-            <div class="weapon">
-                <p>Меч</p>
-                <button data-price="3000" data-weapon="blade">Купить(3000)</button>
+            <div class="section">
+                <h2 class="section-title">Оружие</h2>
+                <div class="item">
+                    <p>Пистолет</p>
+                    <button data-weapon="pistol" class="bought selected">Выбрано</button>
+                </div>
+                <div class="item">
+                    <p>Дигл</p>
+                    <button data-price="500" data-weapon="deagle">Купить(500)</button>
+                </div>
+                <div class="item">
+                    <p>Дробовик</p>
+                    <button data-price="1000" data-weapon="shotgun">Купить(1000)</button>
+                </div>
+                <div class="item">
+                    <p>Автомат</p>
+                    <button data-price="1500" data-weapon="automate">Купить(1500)</button>
+                </div>
+                <div class="item">
+                    <p>Меч</p>
+                    <button data-price="3000" data-weapon="blade">Купить(3000)</button>
+                </div>
             </div>
         </div>
     </div>
 
-<script src="js/script.js"></script>
+<script src="js/main.js"></script>
+<script src="js/areas.js"></script>
 <script src="js/player.js"></script>
 <script src="js/weapon.js"></script>
 <script src="js/enemyEffects.js"></script>

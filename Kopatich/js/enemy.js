@@ -23,10 +23,11 @@ Enemy.prototype.draw = function() {
     	ctx.fillStyle = '#AE0101';
     	ctx.fillRect(part.x, part.y, part.w, part.h);
     });
-    this.move();
     if(this.effect) {
     	this.effect.draw(this.x, this.y, this.w, this.h);
     }
+
+    this.move();
 }
 
 Enemy.prototype.initLine = function() {
@@ -57,16 +58,16 @@ Enemy.prototype.move = function() {
     player.bullets.forEach((bullet, bulletIndex) => {
     	if(checkCollision(bullet, this)) {
     		this.takeDamage(player.weapon.dmg, bullet);
-    		player.bullets.splice(bulletIndex, 1);
+    		if(!bullet.pierce)
+                player.bullets.splice(bulletIndex, 1);
     	}
     });
-
-    if(player.shooting && checkCollision(this, player.weapon.dmgArea)) {
-    	if(this.dmgCooldown <= 0) {
-    		this.takeDamage(player.weapon.dmg);
-    		this.dmgCooldown = 10;
-    	}
-    }
+    
+    areas.forEach(area => {
+        if(checkCollision(area, this)) {
+            area.effect(this);
+        }
+    });
 }
 
 Enemy.prototype.takeDamage = function(dmg, bullet = { x: this.x - this.w / 2, y: this.y - this.h / 2, dx: getRandom(-40, 40), dy: getRandom(-40, 40) }) {
@@ -157,7 +158,11 @@ const enemySpawn = () => {
     }
 
     const type = enemyType[getRandom(0, enemyType.length - 1)];
-    const effect = getRandom(0, 100) <= 25 ? enemyEffects[getRandom(0, enemyEffects.length - 1)] : null;
+    let effect;
+
+    getChanse(() => {
+    	effect = enemyEffects[getRandom(0, enemyEffects.length - 1)];
+    }, 10)
 
     if(!paused)
     	enemies.push(new Enemy(sideCoordinates.x, sideCoordinates.y, {...type}, effect));
@@ -183,4 +188,16 @@ bloodRemove();
 // 	w: 35,
 // 	h: 35,
 // 	color: '#255b0b'
-// }));
+// },
+//     // {
+//     //     name: 'armor',
+//     //     draw: function(x, y, w, h) {
+//     //         ctx.strokeStyle = '#A7A5A5';
+//     //         ctx.lineWidth = 2;
+//     //         ctx.strokeRect(x, y, w, h);
+//     //     },
+//     //     act: function(enemy) {
+//     //         enemy.hp += 5;
+//     //     }
+//     // }
+// ));

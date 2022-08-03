@@ -22,6 +22,7 @@ const mouse = {
 
 var player;
 var enemies = [];
+const areas = [];
 const enemyBlood = [];
 const enemyType = [
 	{
@@ -125,6 +126,12 @@ function checkCollision(obj1, obj2) {
     }
 }
 
+function getChanse(cb, chanse) {
+    if(getRandom(1, 100) <= chanse) {
+        cb();
+    }
+}
+
 function ExplosionParticle(x, y, w, h, color, speed) {
     this.x = x;
     this.y = y;
@@ -144,15 +151,15 @@ ExplosionParticle.prototype.draw = function(index) {
     ctx.save();
     ctx.globalAlpha = Math.abs(this.alpha);
     ctx.fillStyle = this.color;
-    ctx.fillRect(~~this.x, ~~this.y, this.w, this.h);
+    ctx.fillRect(this.x, this.y, this.w, this.h);
     ctx.restore();
 
     this.move(index);
 }
 
 ExplosionParticle.prototype.move = function(index) {
-    this.x += ~~this.dx;
-    this.y += ~~this.dy;
+    this.x += this.dx;
+    this.y += this.dy;
 }
 
 const explosionParticles = [];

@@ -17,7 +17,13 @@ Weapon.prototype.getType = function() {
 			this.bulletSpeed = 30;
 			this.dmg = 1;
 			this.shoot = function() {
-				player.bullets.push(new Bullet(player.x + player.w / 2 - 5, player.y + player.h / 2 - 5, mouse.x, mouse.y, 6, 6));
+				player.bullets.push(new Bullet(
+					player.center.x - 5,
+					player.center.y - 5,
+					mouse.x,
+					mouse.y,
+					6,
+					6));
 			}
 			break;
 		case 'deagle':
@@ -26,8 +32,8 @@ Weapon.prototype.getType = function() {
 			this.dmg = 2;
 			this.shoot = function() {
 				player.bullets.push(new Bullet(
-					player.x + player.w / 2 - 5,
-					player.y + player.h / 2 - 5,
+					player.center.x - 5,
+					player.center.y - 5,
 					mouse.x,
 					mouse.y
 				));
@@ -40,8 +46,8 @@ Weapon.prototype.getType = function() {
 			this.shoot = function() {
 				for(let i = 0; i < 10; i++)
 					player.bullets.push(new Bullet(
-						player.x + player.w / 2 - 5,
-						player.y + player.h / 2 - 5,
+						player.center.x - 5,
+						player.center.y - 5,
 						mouse.x + i * getRandom(-10, 10),
 						mouse.y + i * getRandom(-10, 10),
 						6,
@@ -55,8 +61,8 @@ Weapon.prototype.getType = function() {
 			this.dmg = 2;
 			this.shoot = function() {
 				player.bullets.push(new Bullet(
-					player.x + player.w / 2 - 5,
-					player.y + player.h / 2 - 5,
+					player.center.x - 5,
+					player.center.y - 5,
 					mouse.x + getRandom(-30, 30),
 					mouse.y + getRandom(-30, 30)
 				));
@@ -67,17 +73,29 @@ Weapon.prototype.getType = function() {
 			this.bulletSpeed = 20;
 			this.dmg = 2;
 			this.bladeSize = 75;
-			this.dmgArea = {
-				x: 0,
-				y: 0,
-				w: 0,
-				h: 0
+			const bladeDamageArea = areas.find(area => area.name === 'bladeDamageArea');
+			if(!bladeDamageArea) {
+				const dmg = this.dmg
+				areas.push(new Area(
+					'bladeDamageArea',
+					player.center.x - this.bladeSize,
+					player.center.y - this.bladeSize,
+					this.bladeSize * 2,
+					this.bladeSize * 2,
+					function(obj) {
+						if(player.shooting && obj.dmgCooldown <= 0) {
+							obj.takeDamage(dmg);
+							obj.dmgCooldown = 10;
+						}
+					}
+				));
 			}
 			this.shoot = function() {
-				this.dmgArea.x = player.x + player.w / 2 - this.bladeSize;
-				this.dmgArea.y = player.y + player.h / 2 - this.bladeSize;
-				this.dmgArea.w = this.bladeSize * 2;
-				this.dmgArea.h = this.bladeSize * 2;
+				const aoe = areas.find(area => area.name === 'bladeDamageArea');
+				aoe.x = player.center.x - this.bladeSize;
+				aoe.y = player.center.y - this.bladeSize;
+				aoe.w = this.bladeSize * 2;
+				aoe.h = this.bladeSize * 2;
 
 				this.angle -= 45;
 			}
@@ -88,13 +106,13 @@ Weapon.prototype.getType = function() {
 Weapon.prototype.draw = function() {
 	if(this.type === 'blade') {
 		if(!player.shooting)
-			this.angle = Math.atan2(mouse.y - (player.y + player.h / 2), mouse.x - (player.x + player.w / 2));
+			this.angle = Math.atan2(mouse.y - player.center.y, mouse.x - player.center.x);
 	}
 	else
-		this.angle = Math.atan2(mouse.y - (player.y + player.h / 2), mouse.x - (player.x + player.w / 2));
+		this.angle = Math.atan2(mouse.y - player.center.y, mouse.x - player.center.x);
     ctx.beginPath();
     ctx.save();
-    ctx.translate(player.x + player.w / 2, player.y + player.h / 2);
+    ctx.translate(player.center.x, player.center.y);
     ctx.rotate(this.angle);
 
     switch(this.type) {
@@ -130,7 +148,6 @@ Weapon.prototype.draw = function() {
 		case 'automate':
         	ctx.fillStyle = '#A7A4A4';
 			ctx.fillRect(0, 0, 50, 6);
-			ctx.fillStyle = '#A7A4A4';
 			ctx.fillRect(20, -4, 20, 15);
 			ctx.strokeStyle = '#353535';
 			ctx.lineWidth = 3;
@@ -155,7 +172,7 @@ Weapon.prototype.draw = function() {
 			ctx.lineTo(0, 1);
 			ctx.fill();
 			ctx.closePath();
-			break;
+			break;	
 	}
 
     ctx.restore();
@@ -175,7 +192,11 @@ function Bullet(x, y, endX, endY, w = 8, h = 8) {
 Bullet.prototype.draw = function(index) {
 	ctx.beginPath();
     ctx.fillStyle = '#ffc900';
-    ctx.roundRect(~~this.x, ~~this.y, this.w, this.h, 5).fill();
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    ctx.rotate(this.angle);
+    ctx.roundRect(0, 0, this.w, this.h, 5).fill();
+    ctx.restore();
     ctx.closePath();
 
     this.move(index);
@@ -186,8 +207,8 @@ Bullet.prototype.move = function(index) {
         player.bullets.splice(index, 1);
     }
 
-    this.x += ~~this.dx;
-    this.y += ~~this.dy;
+    this.x += this.dx;
+    this.y += this.dy;
 }
 
 player.boughtWeapons['pistol'] = new Weapon('pistol');
