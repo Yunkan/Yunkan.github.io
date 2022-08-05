@@ -73,29 +73,29 @@ Weapon.prototype.getType = function() {
 			this.bulletSpeed = 20;
 			this.dmg = 2;
 			this.bladeSize = 75;
-			const bladeDamageArea = areas.find(area => area.name === 'bladeDamageArea');
-			if(!bladeDamageArea) {
-				const dmg = this.dmg
-				areas.push(new Area(
-					'bladeDamageArea',
-					player.center.x - this.bladeSize,
-					player.center.y - this.bladeSize,
-					this.bladeSize * 2,
-					this.bladeSize * 2,
-					function(obj) {
-						if(player.shooting && obj.dmgCooldown <= 0) {
-							obj.takeDamage(dmg);
-							obj.dmgCooldown = 10;
-						}
-					}
-				));
-			}
 			this.shoot = function() {
-				const aoe = areas.find(area => area.name === 'bladeDamageArea');
-				aoe.x = player.center.x - this.bladeSize;
-				aoe.y = player.center.y - this.bladeSize;
-				aoe.w = this.bladeSize * 2;
-				aoe.h = this.bladeSize * 2;
+				if(!areas.find(area => area.name === 'bladeArea')) {
+					const dmg = this.dmg
+					areas.push(new Area(
+						'bladeArea',
+						player.center.x - this.bladeSize,
+						player.center.y - this.bladeSize,
+						this.bladeSize * 2,
+						this.bladeSize * 2,
+						function(obj) {
+							if(player.shooting && obj.dmgCooldown <= 0) {
+								obj.takeDamage(dmg);
+								obj.dmgCooldown = 10;
+							}
+						}
+					));
+				}
+
+				const bladeArea = areas.find(area => area.name === 'bladeArea');
+				bladeArea.x = player.center.x - this.bladeSize;
+				bladeArea.y = player.center.y - this.bladeSize;
+				bladeArea.w = this.bladeSize * 2;
+				bladeArea.h = this.bladeSize * 2;
 
 				this.angle -= 45;
 			}

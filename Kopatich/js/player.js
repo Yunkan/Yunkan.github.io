@@ -9,7 +9,7 @@ function Player() {
     }
     this.moveSpeed = 5;
     this.hp = 100;
-    this.score = 0;
+    this.score = 100000;
     this.moveDirection = {
         up: false,
         down: false,
@@ -103,6 +103,11 @@ Player.prototype.setScore = function(points) {
 }
 
 Player.prototype.getWeapon = function(weapon) {
+    const bladeArea = areas.find(area => area.name === 'bladeArea');
+    if(weapon !== 'blade' && bladeArea) {
+        bladeArea.destroy();
+    }
+
     this.weapon = this.boughtWeapons[weapon];
 }
 

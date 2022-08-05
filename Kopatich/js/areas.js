@@ -11,3 +11,7 @@ Area.prototype.move = function(x, y) {
     this.x = x;
     this.y = y;
 }
+
+Area.prototype.destroy = function() {
+	areas = areas.filter(area => area.name !== this.name);
+}

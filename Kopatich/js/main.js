@@ -22,7 +22,7 @@ const mouse = {
 
 var player;
 var enemies = [];
-const areas = [];
+var areas = [];
 const enemyBlood = [];
 const enemyType = [
 	{
