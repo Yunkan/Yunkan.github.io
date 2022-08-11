@@ -9,7 +9,7 @@ function Player() {
     }
     this.moveSpeed = 5;
     this.hp = 100;
-    this.score = 100000;
+    this.score = 0;
     this.moveDirection = {
         up: false,
         down: false,
