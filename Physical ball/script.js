@@ -28,7 +28,7 @@ const canVibrate = 'vibrate' in navigator
 
 function vibrateOnCollision() {
   if (!canVibrate) return
-  navigator.vibrate(100)
+  navigator.vibrate(50)
 }
 
 function getDistance(x1, y1, x2, y2) {

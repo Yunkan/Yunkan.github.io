@@ -58,7 +58,7 @@ const canVibrate = 'vibrate' in navigator
 
 function vibrateOnClick() {
   if (!canVibrate) return
-  navigator.vibrate(100)
+  navigator.vibrate(50)
 }
 
 function Bubble(x, y, dx, dy, r) {
