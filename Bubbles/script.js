@@ -54,6 +54,13 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 
+const canVibrate = 'vibrate' in navigator
+
+function vibrateOnClick() {
+  if (!canVibrate) return
+  navigator.vibrate(100)
+}
+
 function Bubble(x, y, dx, dy, r) {
 	this.x = x;
 	this.y = y;
@@ -101,6 +108,7 @@ Bubble.prototype.die = function(index) {
 	}
 
 	bubbles.splice(index, 1);
+	vibrateOnClick()
 }
 
 function MiniBubble(x, y, r, i) {
@@ -174,7 +182,7 @@ canvas.onmousedown = function(e) {
 }
 
 function animate() {
-	requestAnimationFrame(animate);
+	// requestAnimationFrame(animate);
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 	bubbles.forEach(bubble => bubble.draw());
@@ -182,7 +190,7 @@ function animate() {
 	waves.forEach(wave => wave.draw());
 }
 
-animate();
+// animate();
 
 setInterval(() => {
 	const x = getRandom(25, canvas.width - 25);
@@ -192,3 +200,5 @@ setInterval(() => {
 	const dy = Math.random() - 0.5;
 	bubbles.push(new Bubble(x, y, dx, dy, r));
 }, 500);
+
+setInterval(() => animate(), 1000 / 60)
