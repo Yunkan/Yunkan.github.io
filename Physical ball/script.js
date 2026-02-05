@@ -24,13 +24,6 @@ var mouse = {
 	}
 };
 
-const canVibrate = 'vibrate' in navigator
-
-function vibrateOnCollision() {
-  if (!canVibrate) return
-  navigator.vibrate(50)
-}
-
 function getDistance(x1, y1, x2, y2) {
 	const xDist = x2 - x1;
 	const yDist = y2 - y1;
@@ -92,7 +85,6 @@ function Ball(x, y, radius, dx, dy) {
 	this.mass = 1;
 	this.mouseDown = false;
 	this.ballColor = colors[getRandom(0, 6)]
-	this.lastVibration = 0
 
 	this.draw = function() {
 		ctx.beginPath();
@@ -115,22 +107,10 @@ function Ball(x, y, radius, dx, dy) {
 		if(!this.mouseDown) {
 			if(this.x + this.radius + this.dx > canvas.width + 5 || this.x - this.radius + this.dx <= -5) {
 				this.dx = -this.dx;
-
-				const now = Date.now()
-  				if (now - this.lastVibration > 300) {
-		    		vibrateOnCollision()
-		    		this.lastVibration = now
-  				}
 			}
 
 			if(this.y + this.radius + this.dy > canvas.height || this.y - this.radius + this.dy <= -5) {
 				this.dy = -this.dy * this.frictionY;
-
-				const now = Date.now()
-				if (now - this.lastVibration > 300) {
-		    		vibrateOnCollision()
-		    		this.lastVibration = now
-				}
 			} else {
 				this.dy += this.gravity;
 			}
