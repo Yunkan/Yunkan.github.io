@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Интерактивный 3D куб</title>
+    <style>
+        body {
+		    margin: 0;
+		    padding: 0;
+		    overflow: hidden;
+		    background: radial-gradient(
+		        circle at center,
+		        #0a1a2a 0%,
+		        #050d15 50%,
+		        #02060a 100%
+		    );
+		    font-family: Arial, sans-serif;
+		}
+
+		body.linear {
+			background: linear-gradient(
+			    to bottom,
+			    #0a1a2a 0%,
+			    #08141e 50%,
+			    #03080c 100%
+			);
+		}
+        
+        .controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+        }
+        
+        #cubeColorPicker {
+        	cursor: pointer;
+        }
+
+        #bgChanger {
+        	outline: none;
+        	color: white;
+        	background: rgba(0,0,0,0.8);
+        	padding: 15px;
+        	border-radius: 8px;
+        	border: none;
+        	z-index: 100;
+        	cursor: pointer;
+        	transition: background .2s;
+        }
+
+        #bgChanger:hover {
+        	background: rgba(100,100,100,0.8);
+        }
+        
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <div style="position: fixed; top: 10px; left: 10px; background: rgba(0,0,0,0.8); padding: 15px; border-radius: 8px; z-index: 100;">
+	        <label style="color: white; font-family: sans-serif; margin-bottom: 5px; display: block;">Выберите цвет куба:</label>
+	        <input type="color" id="cubeColorPicker" value="#ff6b6b">
+	    </div>
+        <button id="bgChanger">Сменить фон</button>
+    </div>
+
+    <script>
+    	// Создаём canvas для частиц
+		const particleCanvas = document.createElement('canvas');
+		particleCanvas.id = 'particleCanvas';
+		particleCanvas.style.position = 'fixed';
+		particleCanvas.style.top = '0';
+		particleCanvas.style.left = '0';
+		particleCanvas.style.width = '100%';
+		particleCanvas.style.height = '100%';
+		particleCanvas.style.zIndex = '-2';
+		particleCanvas.style.pointerEvents = 'none';
+		document.body.appendChild(particleCanvas);
+
+		const particleCtx = particleCanvas.getContext('2d');
+
+		// Настройки частиц
+		const particles = [];
+		const particleCount = 100;
+
+		// Инициализация частиц
+		function initParticles() {
+		    particles.length = 0; // Очищаем массив
+
+		    for (let i = 0; i < particleCount; i++) {
+		        particles.push({
+		            x: Math.random() * window.innerWidth,
+		            y: Math.random() * window.innerHeight,
+		            size: Math.random() * 2 + 0.5,
+		            speedX: (Math.random() - 0.5) * 0.2,
+		            speedY: (Math.random() - 0.5) * 0.2
+		        });
+		    }
+		}
+
+		// Функция отрисовки частиц
+		function drawParticles() {
+		    // Обновляем размер canvas при изменении окна
+		    particleCanvas.width = window.innerWidth;
+		    particleCanvas.height = window.innerHeight;
+
+		    // Полупрозрачная заливка для эффекта «хвостов»
+		    particleCtx.fillStyle = 'rgba(10, 26, 42, 0.1)';
+		    particleCtx.fillRect(0, 0, particleCanvas.width, particleCanvas.height);
+
+		    particles.forEach(p => {
+		        // Движение
+		        p.x += p.speedX;
+		        p.y += p.speedY;
+
+		        // Зацикливание частиц
+		        if (p.x < 0) p.x = window.innerWidth;
+		        if (p.x > window.innerWidth) p.x = 0;
+		        if (p.y < 0) p.y = window.innerHeight;
+		        if (p.y > window.innerHeight) p.y = 0;
+
+		        // Рисуем частицу
+		        particleCtx.beginPath();
+		        particleCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+		        particleCtx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+		        particleCtx.fill();
+		    });
+
+		    requestAnimationFrame(drawParticles);
+		}
+
+		// Запуск анимации частиц
+		initParticles();
+		drawParticles();
+
+        // Основные переменные
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        document.body.appendChild(canvas);
+
+        // Кватернион для хранения текущей ориентации куба
+        let quaternion = [0, 0, 0, 1]; // [x, y, z, w] — начальное состояние (без вращения)
+        let isDragging = false;
+        let lastX, lastY;
+        let velocityX = 0, velocityY = 0;
+        const friction = 0.95;
+
+        // Настройка canvas
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            initParticles()
+        }
+
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Функция для создания куба
+        function createCube() {
+            const size = 150;
+            const half = size / 2;
+            
+            return {
+                vertices: [
+                    [-half, -half, -half], // 0
+                    [half, -half, -half],  // 1
+                    [half, half, -half],   // 2
+                    [-half, half, -half],  // 3
+                    [-half, -half, half],  // 4
+                    [half, -half, half],   // 5
+                    [half, half, half],    // 6
+                    [-half, half, half]    // 7
+                ],
+                faces: [
+                    { vertices: [0, 1, 2, 3], color: 'rgba(255, 100, 100, 0.8)' }, // Передняя
+                    { vertices: [4, 5, 6, 7], color: 'rgba(200, 100, 100, 0.8)' }, // Задняя
+                    { vertices: [0, 1, 5, 4], color: 'rgba(150, 100, 100, 0.8)' }, // Нижняя
+                    { vertices: [2, 3, 7, 6], color: 'rgba(255, 150, 100, 0.8)' }, // Верхняя
+                    { vertices: [0, 3, 7, 4], color: 'rgba(200, 150, 100, 0.8)' }, // Левая
+                    { vertices: [1, 2, 6, 5], color: 'rgba(255, 200, 100, 0.8)' }  // Правая
+                ],
+                size: size
+            };
+        }
+
+        const cube = createCube();
+
+        // Функция умножения кватернионов
+        function multiplyQuaternions(q1, q2) {
+            return [
+                q1[3] * q2[0] + q1[0] * q2[3] + q1[1] * q2[2] - q1[2] * q2[1],
+                q1[3] * q2[1] - q1[0] * q2[2] + q1[1] * q2[3] + q1[2] * q2[0],
+                q1[3] * q2[2] + q1[0] * q2[1] - q1[1] * q2[0] + q1[2] * q2[3],
+                q1[3] * q2[3] - q1[0] * q2[0] - q1[1] * q2[1] - q1[2] * q2[2]
+            ];
+        }
+
+        // Функция создания кватерниона вращения вокруг оси
+        function createRotationQuaternion(axis, angle) {
+            const halfAngle = angle / 2;
+            const sinHalf = Math.sin(halfAngle);
+            return [
+                axis[0] * sinHalf,
+                axis[1] * sinHalf,
+                axis[2] * sinHalf,
+                Math.cos(halfAngle)
+            ];
+        }
+
+        // Нормализация кватерниона
+        function normalizeQuaternion(q) {
+            const len = Math.sqrt(q[0]*q[0] + q[1]*q[1] + q[2]*q[2] + q[3]*q[3]);
+            return q.map(x => x / len);
+        }
+
+        // Преобразование кватерниона в матрицу вращения 3×3
+        function quaternionToMatrix(q) {
+            const [x, y, z, w] = q;
+            return [
+                [1 - 2*y*y - 2*z*z, 2*x*y - 2*w*z, 2*x*z + 2*w*y],
+                [2*x*y + 2*w*z, 1 - 2*x*x - 2*z*z, 2*y*z - 2*w*x],
+                [2*x*z - 2*w*y, 2*y*z + 2*w*x, 1 - 2*x*x - 2*y*y]
+            ];
+        }
+
+        // Вращение точки с помощью матрицы
+        function rotatePointWithMatrix(point, matrix) {
+            return [
+                matrix[0][0] * point[0] + matrix[0][1] * point[1] + matrix[0][2] * point[2],
+                matrix[1][0] * point[0] + matrix[1][1] * point[1] + matrix[1][2] * point[2],
+                matrix[2][0] * point[0] + matrix[2][1] * point[1] + matrix[2][2] * point[2]
+            ];
+        }
+
+        // Проекция 3D в 2D (остаётся без изменений)
+        function project(point) {
+		    const distance = 400; // Расстояние до камеры
+		    const scale = distance / (distance + point[2]);
+		    return {
+		        x: canvas.width / 2 + point[0] * scale,
+		        y: canvas.height / 2 + point[1] * scale,
+		        z: point[2]
+		    };
+		}
+
+        // Глобальная переменная для хранения цвета куба
+        let cubeColor = '#ff6b6b'; // Цвет по умолчанию
+
+        // Получаем элемент палитры
+        const colorPicker = document.getElementById('cubeColorPicker');
+
+        // Обновляем цвет при выборе в палитре
+        colorPicker.addEventListener('input', function() {
+            cubeColor = colorPicker.value;
+            drawCube(); // Перерисовываем куб с новым цветом
+        });
+
+        const bgChanger = document.getElementById('bgChanger')
+
+        bgChanger.addEventListener('click', function() {
+ 			document.body.classList.toggle('linear')       	
+        })
+
+		function calculateFaceNormal(face, vertices) {
+		    const indices = face.vertices;
+		    if (indices.length < 3) return { x: 0, y: 0, z: 1 };
+
+		    const v1 = vertices[indices[0]];
+		    const v2 = vertices[indices[1]];
+		    const v3 = vertices[indices[2]];
+
+		    const edge1 = {
+		        x: v2[0] - v1[0],
+		        y: v2[1] - v1[1],
+		        z: v2[2] - v1[2]
+		    };
+		    const edge2 = {
+		        x: v3[0] - v1[0],
+		        y: v3[1] - v1[1],
+		        z: v3[2] - v1[2]
+		    };
+
+		    const normal = {
+		        x: edge1.y * edge2.z - edge1.z * edge2.y,
+		        y: edge1.z * edge2.x - edge1.x * edge2.z,
+		        z: edge1.x * edge2.y - edge1.y * edge2.x
+		    };
+
+		    // Проверяем направление нормали: должна быть направлена наружу
+		    // Для этого проверяем знак скалярного произведения с вектором от центра куба к вершине
+		    const centerToVertex = {
+		        x: v1[0], y: v1[1], z: v1[2] // Центр куба в (0,0,0)
+		    };
+		    const dotProduct = normal.x * centerToVertex.x +
+		                   normal.y * centerToVertex.y +
+		                   normal.z * centerToVertex.z;
+
+		    // Если нормаль направлена внутрь, инвертируем её
+		    if (dotProduct < 0) {
+		        normal.x = -normal.x;
+		        normal.y = -normal.y;
+		        normal.z = -normal.z;
+		    }
+
+		    return normal;
+		}
+
+        function calculateFaceBrightness(faceNormal) {
+		    const length = Math.sqrt(
+		        faceNormal.x * faceNormal.x +
+		         faceNormal.y * faceNormal.y +
+		         faceNormal.z * faceNormal.z);
+
+		    if (length === 0) return 0.4;
+
+		    const normalized = {
+		        x: faceNormal.x / length,
+		        y: faceNormal.y / length,
+		        z: faceNormal.z / length
+		    };
+
+		    // Несколько источников света
+		    const lightDirections = [
+		        { x: 1, y: -1, z: -2 }, // основной
+		        { x: -0.5, y: 0.3, z: -1 }, // дополнительный
+		        { x: 0, y: 0, z: 1 } // фоновый
+		    ];
+
+		    let totalBrightness = 0;
+		    lightDirections.forEach(light => {
+		        const dot = normalized.x * light.x +
+		                  normalized.y * light.y +
+		                  normalized.z * light.z;
+		        totalBrightness += Math.max(0, dot) * (light === lightDirections[0] ? 0.7 : 0.15);
+		    });
+
+		    return 0.25 + 0.6 * totalBrightness; // базовое + динамическое освещение
+		}
+
+		function drawCube() {
+			ctx.imageSmoothingEnabled = true;
+			ctx.imageSmoothingQuality = 'high';
+
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+			// Расчёт матрицы вращения
+			const matrix = quaternionToMatrix(quaternion);
+			const transformedVertices = cube.vertices.map(vertex =>
+			    rotatePointWithMatrix(vertex, matrix)
+			);
+
+			// Сортировка граней по глубине (от дальних к ближним)
+			const sortedFaces = cube.faces.map(face => {
+			    const avgZ = face.vertices
+			        .map(i => transformedVertices[i][2])
+			        .reduce((sum, z) => sum + z, 0) / face.vertices.length;
+			    return { ...face, avgZ };
+			}).sort((a, b) => b.avgZ - a.avgZ);
+
+			sortedFaces.forEach(face => {
+			    // Шаг 1: Основная заливка грани
+			    ctx.beginPath();
+			    face.vertices.forEach((vertexIndex, index) => {
+			        const point = project(transformedVertices[vertexIndex]);
+			        if (index === 0) {
+			            ctx.moveTo(point.x, point.y);
+			        } else {
+			            ctx.lineTo(point.x, point.y);
+			        }
+			    });
+			    ctx.closePath();
+
+			    // Расчёт нормали грани
+			    const faceNormal = calculateFaceNormal(face, transformedVertices);
+			    // Расчёт яркости
+			    const brightness = calculateFaceBrightness(faceNormal);
+
+			    // Преобразование цвета с учётом яркости
+			    const cubeColorParts = cubeColor.slice(1);
+			    const r = Math.round(parseInt(cubeColorParts.substring(0, 2), 16) * brightness);
+			    const g = Math.round(parseInt(cubeColorParts.substring(2, 4), 16) * brightness);
+			    const b = Math.round(parseInt(cubeColorParts.substring(4, 6), 16) * brightness);
+
+			    // Основная заливка
+			    ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+			    ctx.fill();
+
+			    // Вычисляем центр грани для масштабирования
+			    const centerX = face.vertices.reduce((sum, i) =>
+			        sum + project(transformedVertices[i]).x, 0) / face.vertices.length;
+			    const centerY = face.vertices.reduce((sum, i) =>
+			        sum + project(transformedVertices[i]).y, 0) / face.vertices.length;
+
+			    // Шаг 2: Inset‑тень (тёмная полоса вдоль краёв) — один блок
+			    ctx.save();
+			    // Перемещаем начало координат в центр грани
+			    ctx.translate(centerX, centerY);
+			    // Уменьшаем масштаб (на 6 % относительно центра)
+			    ctx.scale(0.96, 0.96);
+			    // Возвращаем начало координат на место
+			    ctx.translate(-centerX, -centerY);
+
+			    // Рисуем тот же контур, но меньше (центрированный)
+			    ctx.beginPath();
+			    face.vertices.forEach((vertexIndex, index) => {
+			        const point = project(transformedVertices[vertexIndex]);
+			        if (index === 0) {
+			            ctx.moveTo(point.x, point.y);
+			        } else {
+			            ctx.lineTo(point.x, point.y);
+			        }
+			    });
+			    ctx.closePath();
+
+			    // Заливка чёрным с прозрачностью — создаёт эффект тени
+			    ctx.fillStyle = 'rgba(0, 0, 0, 0.15)'; // Умеренная прозрачность
+			    ctx.fill();
+			    ctx.restore();
+			});
+		}
+
+        // Обработчики мыши
+        canvas.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            lastX = e.clientX;
+            lastY = e.clientY;
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+
+            const deltaX = (e.clientX - lastX) * 0.01;
+            const deltaY = (e.clientY - lastY) * 0.01;
+
+            // Создаём кватернионы для вращений по осям
+            const rotationY = createRotationQuaternion([0, 1, 0], -deltaX); // Горизонтальное вращение (вокруг Y)
+            const rotationX = createRotationQuaternion([1, 0, 0], deltaY);  // Вертикальное вращение (вокруг X)
+
+            // Применяем вращения к текущему кватерниону (порядок важен: сначала Y, потом X)
+            quaternion = multiplyQuaternions(rotationY, quaternion);
+            quaternion = multiplyQuaternions(rotationX, quaternion);
+            quaternion = normalizeQuaternion(quaternion);
+
+            // Сохраняем скорости для инерции (используем дельты без умножения на 0.01, т. к. уже учли это выше)
+            velocityX = -deltaX * 0.5;
+            velocityY = deltaY * 0.5;
+
+            lastX = e.clientX;
+            lastY = e.clientY;
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        canvas.addEventListener('mouseleave', () => {
+            isDragging = false;
+        });
+
+        // Обработчики тач‑событий
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            isDragging = true;
+            const touch = e.touches[0];
+            lastX = touch.clientX;
+            lastY = touch.clientY;
+        });
+
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            if (!isDragging) return;
+
+            const touch = e.touches[0];
+            const deltaX = (touch.clientX - lastX) * 0.01;
+            const deltaY = (touch.clientY - lastY) * 0.01;
+
+            // Аналогично мышиным событиям
+            const rotationY = createRotationQuaternion([0, 1, 0], -deltaX);
+            const rotationX = createRotationQuaternion([1, 0, 0], deltaY);
+
+            quaternion = multiplyQuaternions(rotationY, quaternion);
+            quaternion = multiplyQuaternions(rotationX, quaternion);
+            quaternion = normalizeQuaternion(quaternion);
+
+            velocityX = -deltaX * 0.5;
+            velocityY = deltaY * 0.5;
+
+            lastX = touch.clientX;
+            lastY = touch.clientY;
+        });
+
+        canvas.addEventListener('touchend', () => {
+            isDragging = false;
+        });
+
+        // Анимационный цикл с инерцией
+        function animate() {
+            if (!isDragging) {
+                // Применяем инерцию, если есть достаточная скорость
+                if (Math.abs(velocityX) > 0.001 || Math.abs(velocityY) > 0.001) {
+                    // Создаём кватернионы инерции
+                    const inertiaY = createRotationQuaternion([0, 1, 0], velocityX);
+                    const inertiaX = createRotationQuaternion([1, 0, 0], velocityY);
+
+                    // Применяем инерцию к текущей ориентации
+                    quaternion = multiplyQuaternions(inertiaY, quaternion);
+                    quaternion = multiplyQuaternions(inertiaX, quaternion);
+                    quaternion = normalizeQuaternion(quaternion);
+
+                    // Замедление из‑за трения
+                    velocityX *= friction;
+                    velocityY *= friction;
+
+                    // Полная остановка при малой скорости
+                    if (Math.abs(velocityX) < 0.001) velocityX = 0;
+                    if (Math.abs(velocityY) < 0.001) velocityY = 0;
+                }
+            }
+
+            drawCube();
+            requestAnimationFrame(animate);
+        }
+
+        // Запуск анимации
+        animate();
+    </script>
+</body>
+</html>
