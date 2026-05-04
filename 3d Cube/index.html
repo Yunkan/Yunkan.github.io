@@ -10,21 +10,32 @@
 		    padding: 0;
 		    overflow: hidden;
 		    background: radial-gradient(
-		        circle at center,
+		        circle 50vmin at center,
 		        #0a1a2a 0%,
-		        #050d15 50%,
-		        #02060a 100%
+		        #050d15 45%,
+		        #02060a 90%
 		    );
 		    font-family: Arial, sans-serif;
+		    animation: subtleGlow 8s ease-in-out infinite;
 		}
 
-		body.linear {
-			background: linear-gradient(
-			    to bottom,
-			    #0a1a2a 0%,
-			    #08141e 50%,
-			    #03080c 100%
-			);
+		@keyframes subtleGlow {
+		    0%, 100% {
+		        background: radial-gradient(
+		            circle 50vmin at center,
+		            #0a1a2a 0%,
+		            #050d15 45%,
+		            #02060a 90%
+		        );
+		    }
+		    50% {
+		        background: radial-gradient(
+		            circle 50vmin at center,
+		            #0b1c2c 0%,  /* Чуть светлее центр */
+		            #060e17 45%, /* Чуть другой средний тон */
+		            #02060a 90%
+		        );
+		    }
 		}
         
         .controls {
@@ -37,22 +48,6 @@
         #cubeColorPicker {
         	cursor: pointer;
         }
-
-        #bgChanger {
-        	outline: none;
-        	color: white;
-        	background: rgba(0,0,0,0.8);
-        	padding: 15px;
-        	border-radius: 8px;
-        	border: none;
-        	z-index: 100;
-        	cursor: pointer;
-        	transition: background .2s;
-        }
-
-        #bgChanger:hover {
-        	background: rgba(100,100,100,0.8);
-        }
         
         canvas {
             display: block;
@@ -63,80 +58,11 @@
     <div class="controls">
         <div style="position: fixed; top: 10px; left: 10px; background: rgba(0,0,0,0.8); padding: 15px; border-radius: 8px; z-index: 100;">
 	        <label style="color: white; font-family: sans-serif; margin-bottom: 5px; display: block;">Выберите цвет куба:</label>
-	        <input type="color" id="cubeColorPicker" value="#ff6b6b">
+	        <input type="color" id="cubeColorPicker" value="#ffffff">
 	    </div>
-        <button id="bgChanger">Сменить фон</button>
     </div>
 
     <script>
-    	// Создаём canvas для частиц
-		const particleCanvas = document.createElement('canvas');
-		particleCanvas.id = 'particleCanvas';
-		particleCanvas.style.position = 'fixed';
-		particleCanvas.style.top = '0';
-		particleCanvas.style.left = '0';
-		particleCanvas.style.width = '100%';
-		particleCanvas.style.height = '100%';
-		particleCanvas.style.zIndex = '-2';
-		particleCanvas.style.pointerEvents = 'none';
-		document.body.appendChild(particleCanvas);
-
-		const particleCtx = particleCanvas.getContext('2d');
-
-		// Настройки частиц
-		const particles = [];
-		const particleCount = 100;
-
-		// Инициализация частиц
-		function initParticles() {
-		    particles.length = 0; // Очищаем массив
-
-		    for (let i = 0; i < particleCount; i++) {
-		        particles.push({
-		            x: Math.random() * window.innerWidth,
-		            y: Math.random() * window.innerHeight,
-		            size: Math.random() * 2 + 0.5,
-		            speedX: (Math.random() - 0.5) * 0.2,
-		            speedY: (Math.random() - 0.5) * 0.2
-		        });
-		    }
-		}
-
-		// Функция отрисовки частиц
-		function drawParticles() {
-		    // Обновляем размер canvas при изменении окна
-		    particleCanvas.width = window.innerWidth;
-		    particleCanvas.height = window.innerHeight;
-
-		    // Полупрозрачная заливка для эффекта «хвостов»
-		    particleCtx.fillStyle = 'rgba(10, 26, 42, 0.1)';
-		    particleCtx.fillRect(0, 0, particleCanvas.width, particleCanvas.height);
-
-		    particles.forEach(p => {
-		        // Движение
-		        p.x += p.speedX;
-		        p.y += p.speedY;
-
-		        // Зацикливание частиц
-		        if (p.x < 0) p.x = window.innerWidth;
-		        if (p.x > window.innerWidth) p.x = 0;
-		        if (p.y < 0) p.y = window.innerHeight;
-		        if (p.y > window.innerHeight) p.y = 0;
-
-		        // Рисуем частицу
-		        particleCtx.beginPath();
-		        particleCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-		        particleCtx.fillStyle = 'rgba(255, 255, 255, 0.3)';
-		        particleCtx.fill();
-		    });
-
-		    requestAnimationFrame(drawParticles);
-		}
-
-		// Запуск анимации частиц
-		initParticles();
-		drawParticles();
-
         // Основные переменные
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
@@ -148,16 +74,6 @@
         let lastX, lastY;
         let velocityX = 0, velocityY = 0;
         const friction = 0.95;
-
-        // Настройка canvas
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            initParticles()
-        }
-
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
 
         // Функция для создания куба
         function createCube() {
@@ -227,6 +143,21 @@
             ];
         }
 
+		function applyInitialRotation() {
+		    // Угол поворота: 30° вправо (вокруг оси Y) и 20° вниз (вокруг оси X)
+		    const angleY = -30 * Math.PI / 180; // 30 градусов в радианах
+		    const angleX = 20 * Math.PI / 180; // 20 градусов в радианах
+
+		    // Создаём кватернионы для начального вращения
+		    const rotationY = createRotationQuaternion([0, 1, 0], angleY); // Поворот вправо
+		    const rotationX = createRotationQuaternion([1, 0, 0], angleX); // Поворот вниз
+
+		    // Применяем вращения к начальному кватерниону (порядок: сначала Y, потом X)
+		    quaternion = multiplyQuaternions(rotationY, quaternion);
+		    quaternion = multiplyQuaternions(rotationX, quaternion);
+		    quaternion = normalizeQuaternion(quaternion);
+		}
+
         // Вращение точки с помощью матрицы
         function rotatePointWithMatrix(point, matrix) {
             return [
@@ -246,24 +177,6 @@
 		        z: point[2]
 		    };
 		}
-
-        // Глобальная переменная для хранения цвета куба
-        let cubeColor = '#ff6b6b'; // Цвет по умолчанию
-
-        // Получаем элемент палитры
-        const colorPicker = document.getElementById('cubeColorPicker');
-
-        // Обновляем цвет при выборе в палитре
-        colorPicker.addEventListener('input', function() {
-            cubeColor = colorPicker.value;
-            drawCube(); // Перерисовываем куб с новым цветом
-        });
-
-        const bgChanger = document.getElementById('bgChanger')
-
-        bgChanger.addEventListener('click', function() {
- 			document.body.classList.toggle('linear')       	
-        })
 
 		function calculateFaceNormal(face, vertices) {
 		    const indices = face.vertices;
@@ -423,6 +336,84 @@
 			});
 		}
 
+		// Создаём canvas для частиц
+		const particleCanvas = document.createElement('canvas');
+		particleCanvas.id = 'particleCanvas';
+		particleCanvas.style.position = 'fixed';
+		particleCanvas.style.top = '0';
+		particleCanvas.style.left = '0';
+		particleCanvas.style.width = '100%';
+		particleCanvas.style.height = '100%';
+		particleCanvas.style.zIndex = '-2';
+		particleCanvas.style.pointerEvents = 'none';
+		document.body.appendChild(particleCanvas);
+
+		const particleCtx = particleCanvas.getContext('2d');
+
+		// Настройки частиц
+		const particles = [];
+		const particleCount = 150;
+		let particleSpeed = 0.1;
+
+		// Инициализация частиц
+		function initParticles() {
+		    particles.length = 0; // Очищаем массив
+
+		    for (let i = 0; i < particleCount; i++) {
+		        particles.push({
+		            x: Math.random() * window.innerWidth,
+		            y: Math.random() * window.innerHeight,
+		            size: Math.random() * 2 + 0.5, // Меньший диапазон размеров
+		            speedX: (Math.random() - 0.5) * particleSpeed * 2, // Более разнообразное движение
+		            speedY: (Math.random() - 0.5) * particleSpeed * 2,
+		            alpha: Math.random() * 0.6 + 0.2, // Диапазон прозрачности 0.2–0.8
+		            // Добавляем параметры для пульсации
+		            pulsePhase: Math.random() * Math.PI * 2, // Начальная фаза пульсации
+		            pulseSpeed: Math.random() * 0.02 + 0.01 // Скорость пульсации
+		        });
+		    }
+		}
+
+		// Функция отрисовки частиц
+		function drawParticles() {
+		    // Обновляем размер canvas при изменении окна
+		    particleCanvas.width = window.innerWidth;
+		    particleCanvas.height = window.innerHeight;
+
+		    // Полупрозрачная заливка для эффекта «хвостов»
+		    particleCtx.fillStyle = 'rgba(10, 26, 42, 0.1)';
+		    particleCtx.fillRect(0, 0, particleCanvas.width, particleCanvas.height);
+
+		    particles.forEach(p => {
+		        // Движение
+		        p.x += p.speedX;
+		        p.y += p.speedY;
+
+		        // Пульсация размера
+			    const pulse = Math.sin(p.pulsePhase) * 0.3 + 1; // Колебания 0.4–1.0
+			    const currentSize = p.size * pulse;
+			    p.pulsePhase += p.pulseSpeed; // Обновляем фазу
+
+		        // Зацикливание частиц
+		        if (p.x < 0) p.x = window.innerWidth;
+		        if (p.x > window.innerWidth) p.x = 0;
+		        if (p.y < 0) p.y = window.innerHeight;
+		        if (p.y > window.innerHeight) p.y = 0;
+
+		        // Рисуем частицу
+		        particleCtx.beginPath();
+		        particleCtx.arc(p.x, p.y, currentSize, 0, Math.PI * 2);
+		        particleCtx.fillStyle = `rgba(255, 255, 255, ${p.alpha})`;
+		        particleCtx.fill();
+		    });
+
+		    requestAnimationFrame(drawParticles);
+		}
+
+		// Запуск анимации частиц
+		initParticles();
+		drawParticles();
+
         // Обработчики мыши
         canvas.addEventListener('mousedown', (e) => {
             isDragging = true;
@@ -497,6 +488,18 @@
             isDragging = false;
         });
 
+        // Глобальная переменная для хранения цвета куба
+        let cubeColor = '#ffffff'; // Цвет по умолчанию
+
+        // Получаем элемент палитры
+        const colorPicker = document.getElementById('cubeColorPicker');
+
+        // Обновляем цвет при выборе в палитре
+        colorPicker.addEventListener('input', function() {
+            cubeColor = colorPicker.value;
+            drawCube(); // Перерисовываем куб с новым цветом
+        });
+
         // Анимационный цикл с инерцией
         function animate() {
             if (!isDragging) {
@@ -525,6 +528,17 @@
             requestAnimationFrame(animate);
         }
 
+        // Настройка canvas
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            initParticles()
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+
+        resizeCanvas();
+        applyInitialRotation(); // Применяем начальное вращение
         // Запуск анимации
         animate();
     </script>
